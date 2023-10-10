@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import {
   AdaptiMartLogoCart,
   LoginFullEclipse,
@@ -10,6 +11,8 @@ import "./Login.css";
 import React from "react";
 
 export default function Login() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className="login_box">
@@ -24,7 +27,7 @@ export default function Login() {
             type="email"
             name="email"
             id="email"
-            placeholder="Username"
+            placeholder="Email"
             className="login_input_box"
           />
           <input
@@ -35,7 +38,9 @@ export default function Login() {
             className="login_input_box"
           />
 
-          <button className="login_btn">Login</button>
+          <button className="login_btn" onClick={()=>{
+            navigate("/admin_dashboard");
+          }}>Login</button>
         </div>
 
         <img src={LoginFullEclipse} alt="" className="login_full_ec_img" />
