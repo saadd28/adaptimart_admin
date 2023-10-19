@@ -1,0 +1,8 @@
+.dashboard_main_container{
+    background: #F3F3F3;
+    width: 100%;
+    margin-left: 330px;
+    height: 100vh;
+
+    /* border: 2px solid red; */
+}

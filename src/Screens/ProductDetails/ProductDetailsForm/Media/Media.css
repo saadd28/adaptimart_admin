@@ -1,0 +1,18 @@
+.media_image_upload_container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.media_image_upload_bg_img {
+  width: 100%;
+}
+
+.media_image_upload_input {
+  padding: 0.8em 1em;
+  background-color: #f9f9fc;
+  border-radius: 8px;
+
+  border: 1px solid gray;
+}
