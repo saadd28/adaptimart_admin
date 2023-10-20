@@ -45,7 +45,11 @@ export default function ProductHeader() {
             <div className="prod_head_search_row_container">
                 <div className="prod_head_search_container">
                     <img src={AdminSearchIcon} alt="" className="prod_head_search_img" />
-                    <input type="text" placeholder="Search Product..." className="prod_head_search"/>
+                    <input type="text" placeholder="Search Product..." className="prod_head_search"
+                    onChange={() =>{
+                        
+                    }}
+                    />
                 </div>
 
                 <div className="prod_head_search_type_btn_container">

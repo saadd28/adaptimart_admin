@@ -2,17 +2,25 @@ import "./Navbar.css";
 import { Fade } from "react-reveal";
 import {
   AdaptiMartLogo,
+  NavbarCardLogo,
+  NavbarCartLogo,
+  NavbarDashboardLogo,
   NavbarDashboardLogout,
-  NavbarDashboardSelected,
+  // NavbarDashboardSelected,
   NavbarDashboardUnSelected,
+  NavbarProductLogo,
+  NavbarTruckLogo,
+  NavbarUserLogo,
 } from "../../Assets";
 
 import React, { useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import DashboardIconSVG from "../SVGs/DashboardIconSVG";
+import NavbarLogoutIconSVG from "../SVGs/NavbarLogoutIconSVG";
 
 export default function Navbar() {
   let [ActiveLink, setActiveLink] = useState(1);
+  const navigate = useNavigate();
   // let [tests, settests] = useState();
   // const navigate = useNavigate();
 
@@ -28,18 +36,19 @@ export default function Navbar() {
   //   // });
   // });
 
-
   const isActiveFunc = (match, location) => {
     // Add your custom logic here to determine when the NavLink should be active
     // For example, you might want it to be active for multiple paths
-    if (location.pathname === '/manage_products' || location.pathname === '/product_details'){
+    if (
+      location.pathname === "/manage_products" ||
+      location.pathname === "/product_details"
+    ) {
       return true;
-    }
-    else{
+    } else {
       return false;
     }
   };
-  
+
   return (
     <>
       <Fade left>
@@ -90,9 +99,19 @@ export default function Navbar() {
                   setActiveLink((ActiveLink = 1));
                 }}
               >
-                <div className="dashboard_navbar_link_logo">
+                {/* <div className="dashboard_navbar_link_logo">
                   <DashboardIconSVG />
-                </div>
+                </div> */}
+
+                <img
+                  src={
+                    ActiveLink === 1
+                      ? NavbarDashboardUnSelected
+                      : NavbarDashboardLogo
+                  }
+                  alt=""
+                  className="dashboard_navbar_link_logo"
+                />
 
                 <NavLink
                   to="/admin_dashboard"
@@ -135,11 +154,7 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={
-                    ActiveLink === 2
-                      ? NavbarDashboardSelected
-                      : NavbarDashboardUnSelected
-                  }
+                  src={ActiveLink === 2 ? NavbarProductLogo : NavbarProductLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
@@ -157,7 +172,7 @@ export default function Navbar() {
                     setActiveLink((ActiveLink = 2));
                   }}
                 >
-                  Manage Products
+                  Products
                 </NavLink>
               </div>
 
@@ -168,16 +183,12 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={
-                    ActiveLink === 3
-                      ? NavbarDashboardSelected
-                      : NavbarDashboardUnSelected
-                  }
+                  src={ActiveLink === 3 ? NavbarUserLogo : NavbarUserLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
                 <NavLink
-                  to="/admin_dashboard"
+                  to="/manage_users"
                   className={"dashboard_navbar_link_title_unselected"}
                   style={({ isActive }) => {
                     return {
@@ -185,7 +196,7 @@ export default function Navbar() {
                     };
                   }}
                 >
-                  Dashboard
+                  Users
                 </NavLink>
               </div>
               <div
@@ -195,16 +206,12 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={
-                    ActiveLink === 4
-                      ? NavbarDashboardSelected
-                      : NavbarDashboardUnSelected
-                  }
+                  src={ActiveLink === 4 ? NavbarCartLogo : NavbarCartLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
                 <NavLink
-                  to="/admin_dashboard"
+                  to="/manage_orders"
                   className={"dashboard_navbar_link_title_unselected"}
                   style={({ isActive }) => {
                     return {
@@ -212,7 +219,7 @@ export default function Navbar() {
                     };
                   }}
                 >
-                  Dashboard
+                  Orders
                 </NavLink>
               </div>
               <div
@@ -222,16 +229,12 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={
-                    ActiveLink === 5
-                      ? NavbarDashboardSelected
-                      : NavbarDashboardUnSelected
-                  }
+                  src={ActiveLink === 5 ? NavbarTruckLogo : NavbarTruckLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
                 <NavLink
-                  to="/admin_dashboard"
+                  to="/manage_inventory"
                   className={"dashboard_navbar_link_title_unselected"}
                   style={({ isActive }) => {
                     return {
@@ -239,7 +242,7 @@ export default function Navbar() {
                     };
                   }}
                 >
-                  Dashboard
+                  Inventory
                 </NavLink>
               </div>
               <div
@@ -249,16 +252,12 @@ export default function Navbar() {
                 }}
               >
                 <img
-                  src={
-                    ActiveLink === 6
-                      ? NavbarDashboardSelected
-                      : NavbarDashboardUnSelected
-                  }
+                  src={ActiveLink === 6 ? NavbarUserLogo : NavbarUserLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
                 <NavLink
-                  to="/admin_dashboard"
+                  to="/manage_supplier"
                   className={"dashboard_navbar_link_title_unselected"}
                   style={({ isActive }) => {
                     return {
@@ -266,7 +265,79 @@ export default function Navbar() {
                     };
                   }}
                 >
-                  Dashboard
+                  Supplier
+                </NavLink>
+              </div>
+
+              <div
+                className="dashboard_navbar_link"
+                onClick={() => {
+                  setActiveLink(7);
+                }}
+              >
+                <img
+                  src={ActiveLink === 7 ? NavbarCardLogo : NavbarCardLogo}
+                  alt=""
+                  className="dashboard_navbar_link_logo"
+                />
+                <NavLink
+                  to="/manage_coupons"
+                  className={"dashboard_navbar_link_title_unselected"}
+                  style={({ isActive }) => {
+                    return {
+                      color: isActive ? "#18abb1" : "#cdcdcd",
+                    };
+                  }}
+                >
+                  Coupons
+                </NavLink>
+              </div>
+
+              <div
+                className="dashboard_navbar_link"
+                onClick={() => {
+                  setActiveLink(8);
+                }}
+              >
+                <img
+                  src={ActiveLink === 8 ? NavbarTruckLogo : NavbarTruckLogo}
+                  alt=""
+                  className="dashboard_navbar_link_logo"
+                />
+                <NavLink
+                  to="/manage_shipments"
+                  className={"dashboard_navbar_link_title_unselected"}
+                  style={({ isActive }) => {
+                    return {
+                      color: isActive ? "#18abb1" : "#cdcdcd",
+                    };
+                  }}
+                >
+                  Shipments
+                </NavLink>
+              </div>
+
+              <div
+                className="dashboard_navbar_link"
+                onClick={() => {
+                  setActiveLink(9);
+                }}
+              >
+                <img
+                  src={ActiveLink === 9 ? NavbarCartLogo : NavbarCartLogo}
+                  alt=""
+                  className="dashboard_navbar_link_logo"
+                />
+                <NavLink
+                  to="/manage_returns"
+                  className={"dashboard_navbar_link_title_unselected"}
+                  style={({ isActive }) => {
+                    return {
+                      color: isActive ? "#18abb1" : "#cdcdcd",
+                    };
+                  }}
+                >
+                  Returns
                 </NavLink>
               </div>
             </div>
@@ -274,12 +345,22 @@ export default function Navbar() {
 
           <div className="dashboard_navbar_bottomlinks_container">
             <div className="dashboard_navbar_logout_container">
-              <img
+              {/* <img
                 src={NavbarDashboardLogout}
                 alt=""
                 className="dashboard_navbar_logout_img"
-              />
-              <div className="dashboard_navbar_logout_title">Logout</div>
+              /> */}
+              <div className="dashboard_navbar_logout_img">
+                <NavbarLogoutIconSVG />
+              </div>
+              <div
+                className="dashboard_navbar_logout_title"
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Logout
+              </div>
             </div>
           </div>
 

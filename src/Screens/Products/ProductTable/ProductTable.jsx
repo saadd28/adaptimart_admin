@@ -1,22 +1,33 @@
 import moment from "moment/moment";
 import {
   AdaptiMartLogoCart,
+  AdminDirectoryPathArrow,
   AdminProductEditIcon,
   AdminProductTrashIcon,
+  AdminProfilePic,
+  AdminSearchIcon,
 } from "../../../Assets";
-import { deleteproduct, getallproducts } from "../../../api/apis";
+import {
+  deleteproduct,
+  getallproducts,
+  getproductsbyid,
+  getproductsbyname,
+} from "../../../api/apis";
 import "./ProductTable.css";
 
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Fade } from "react-reveal";
 
-const ProductTableRow = ({ data, setProductsList }) => {
+const ProductTableRow = ({ data, setProductsList, index }) => {
+  const navigate = useNavigate();
+
   const deleteProduct = (data) => {
     console.log("delete product called");
 
     let delObj = {
       id: data ? data.id : 0,
     };
-    debugger;
     deleteproduct(delObj)
       .then((res) => {
         console.log("resp", res);
@@ -26,7 +37,6 @@ const ProductTableRow = ({ data, setProductsList }) => {
             console.log("resp", res);
             alert("Product Deleted Successfully");
             getAllProducts(setProductsList);
-            // navigate("/manage_products");
           }
         }
       })
@@ -36,9 +46,18 @@ const ProductTableRow = ({ data, setProductsList }) => {
       });
   };
 
+  const editProduct = (data) => {
+    navigate("/product_details", {
+      state: {
+        datatosend: data,
+      },
+    });
+  };
+
   return (
     <>
       <tr className="product_table_row">
+        <td className="product_table_data">{index + 1}</td>
         <td className="product_table_data">
           <div className="product_table_data_name_container">
             <img
@@ -48,9 +67,7 @@ const ProductTableRow = ({ data, setProductsList }) => {
                   : AdaptiMartLogoCart
               }
               alt=""
-              style={{
-                width: "20px",
-              }}
+              className="product_table_data_img"
             />
             <div>{data.name}</div>
           </div>
@@ -65,7 +82,7 @@ const ProductTableRow = ({ data, setProductsList }) => {
         </td>
         <td className="product_table_data">{data.category}</td>
         <td className="product_table_data">{data.stock}</td>
-        <td className="product_table_data">{data.price}</td>
+        <td className="product_table_data">${data.price}</td>
         <td className="product_table_data">
           {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
@@ -75,6 +92,9 @@ const ProductTableRow = ({ data, setProductsList }) => {
               src={AdminProductEditIcon}
               alt=""
               className="product_table_data_edit_action_img"
+              onClick={(event) => {
+                editProduct(data);
+              }}
             />
             <img
               src={AdminProductTrashIcon}
@@ -93,6 +113,9 @@ const ProductTableRow = ({ data, setProductsList }) => {
 
 export default function ProductTable() {
   const [ProductsList, setProductsList] = useState(null);
+  const [SearchType, setSearchType] = useState(1); // 1 for name, 2 for id
+  let [SearchName, setSearchName] = useState("");
+  const navigate = useNavigate();
 
   // let data = [
   //   {
@@ -135,38 +158,139 @@ export default function ProductTable() {
 
   return (
     <>
-      <div className="product_table_container">
-        <table
-          className="product_table"
-          style={{
-            // borderSpacing: "0 10px",
-            borderCollapse: "separate",
-          }}
-        >
-          <thead>
-            <tr className="table_heading_row">
-              <th className="table_heading">Product Name</th>
-              <th className="table_heading">SKU_ID</th>
-              <th className="table_heading">Category</th>
-              <th className="table_heading">Stock</th>
-              <th className="table_heading">Price</th>
-              <th className="table_heading">Date Added</th>
-              <th className="table_heading">Action</th>
-            </tr>
-          </thead>
+      {/* Product Header */}
+      <Fade top>
+        <div className="prod_head_box">
+          <div className="prod_head_title_container">
+            <div className="prod_head_title">Manage Products</div>
 
-          <tbody>
-            {ProductsList
-              ? ProductsList.map((item) => (
-                  <ProductTableRow
-                    data={item}
-                    setProductsList={setProductsList}
-                  />
-                ))
-              : ""}
-          </tbody>
-        </table>
-      </div>
+            <img
+              src={AdminProfilePic}
+              alt=""
+              className="prod_head_profile_pic_img"
+            />
+          </div>
+
+          <div className="prod_head_add_prod_container">
+            <div className="prod_head_dir_path_container">
+              <div className="prod_head_dir_path_content">Dashboard</div>
+
+              <img
+                src={AdminDirectoryPathArrow}
+                alt=""
+                className="prod_head_dir_path_arrow_img"
+              />
+
+              <div
+                className="prod_head_dir_path_content"
+                style={{
+                  color: "#667085",
+                }}
+              >
+                Manage Products
+              </div>
+            </div>
+
+            <button
+              className="prod_head_add_product_btn"
+              onClick={() => {
+                navigate("/product_details");
+              }}
+            >
+              + Add Product
+            </button>
+          </div>
+
+          <div className="prod_head_search_row_container">
+            <div className="prod_head_search_container">
+              <img
+                src={AdminSearchIcon}
+                alt=""
+                className="prod_head_search_img"
+              />
+              <input
+                type="text"
+                placeholder="Search Product..."
+                className="prod_head_search"
+                value={SearchName}
+                onChange={(event) => {
+                  setSearchName((SearchName = event.target.value));
+
+                  SearchType === 1
+                    ? getProductsByName(setProductsList, SearchName)
+                    : getProductsById(setProductsList, SearchName);
+                }}
+              />
+            </div>
+
+            <div className="prod_head_search_type_btn_container">
+              <button
+                className={
+                  SearchType === 1
+                    ? "prod_head_search_btn_selected prod_head_search_btn_text"
+                    : "prod_head_search_btn_unselected prod_head_search_btn_text"
+                }
+                onClick={() => {
+                  setSearchType(1);
+                }}
+              >
+                Search By Name
+              </button>
+              <button
+                className={
+                  SearchType === 2
+                    ? "prod_head_search_btn_selected prod_head_search_btn_text"
+                    : "prod_head_search_btn_unselected prod_head_search_btn_text"
+                }
+                onClick={() => {
+                  setSearchType(2);
+                }}
+              >
+                Search By ID
+              </button>
+            </div>
+          </div>
+        </div>
+      </Fade>
+
+      {/* End Product Header */}
+
+      <Fade right>
+        <div className="product_table_container">
+          <table
+            className="product_table"
+            style={{
+              // borderSpacing: "0 10px",
+              borderCollapse: "separate",
+            }}
+          >
+            <thead>
+              <tr className="table_heading_row">
+                <th className="table_heading">No.</th>
+                <th className="table_heading">Product Name</th>
+                <th className="table_heading">SKU_ID</th>
+                <th className="table_heading">Category</th>
+                <th className="table_heading">Stock</th>
+                <th className="table_heading">Price</th>
+                <th className="table_heading">Date Added</th>
+                <th className="table_heading">Action</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {ProductsList
+                ? ProductsList.map((item, index) => (
+                    <ProductTableRow
+                      data={item}
+                      setProductsList={setProductsList}
+                      index={index}
+                    />
+                  ))
+                : ""}
+            </tbody>
+          </table>
+        </div>
+      </Fade>
     </>
   );
 }
@@ -174,7 +298,37 @@ export default function ProductTable() {
 export const getAllProducts = (setProductsList) => {
   getallproducts()
     .then((res) => {
-      console.log("Uodated products list retrieved");
+      console.log("Updated products list retrieved");
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
+    });
+};
+export const getProductsByName = (setProductsList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getproductsbyname(SearchName)
+    .then((res) => {
+      console.log("Searched products list retrieved");
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
+    });
+};
+
+export const getProductsById = (setProductsList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getproductsbyid(SearchName)
+    .then((res) => {
+      console.log("Searched products list retrieved");
+      console.log("res", res);
       setProductsList(res.data);
     })
     .catch((err) => {

@@ -1,5 +1,5 @@
 import Navbar from "../../Compnents/Navbar/Navbar";
-import ProductHeader from "./ProductHeader/ProductHeader";
+// import ProductHeader from "./ProductHeader/ProductHeader";
 import ProductTable from "./ProductTable/ProductTable";
 import "./Products.css";
 
@@ -12,7 +12,7 @@ export default function Products() {
         <Navbar />
 
         <div className="products_main_container">
-            <ProductHeader />
+            {/* <ProductHeader /> */}
 
             <ProductTable />
         </div>

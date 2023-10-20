@@ -8,6 +8,7 @@ export default function ProductDetailsHeader() {
   const navigate = useNavigate();
   return (
     <>
+    
       <div className="prod_head_title_container">
         <div className="prod_head_title">Product Details</div>
 
