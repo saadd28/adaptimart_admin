@@ -13,6 +13,9 @@ import Coupons from "./Screens/Coupons/Coupons";
 import Shipments from "./Screens/Shipments/Shipments";
 import Returns from "./Screens/Returns/Returns";
 import ScrollToTop from "./Compnents/ScrollToTop/ScrollToTop";
+import SupplierDetails from "./Screens/SupplierDetails/SupplierDetails";
+import ShipmentDetails from "./Screens/ShipmentDetails/ShipmentDetails";
+import OrderDetailsView from "./Screens/OrderDetailsView/OrderDetailsView";
 
 function App() {
   // const currentPath = window.location.pathname;
@@ -28,10 +31,13 @@ function App() {
           <Route path="/product_details" element={<ProductDetails />} />
           <Route path="/manage_users" element={<Users />} />
           <Route path="/manage_orders" element={<Orders />} />
+          <Route path="/view_order_details" element={<OrderDetailsView />} />
           <Route path="/manage_inventory" element={<Inventory />} />
           <Route path="/manage_supplier" element={<Suppliers />} />
+          <Route path="/supplier_details" element={<SupplierDetails />} />
           <Route path="/manage_coupons" element={<Coupons />} />
           <Route path="/manage_shipments" element={<Shipments />} />
+          <Route path="/shipment_details" element={<ShipmentDetails />} />
           <Route path="/manage_returns" element={<Returns />} />
         </Routes>
       </BrowserRouter>

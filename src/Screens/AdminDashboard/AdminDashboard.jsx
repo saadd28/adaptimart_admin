@@ -1,4 +1,3 @@
-
 import "./AdminDashboard.css";
 
 import React from "react";
@@ -11,8 +10,7 @@ export default function AdminDashboard() {
         <Navbar />
 
         <div className="dashboard_main_container">
-          
-          
+          <div className="test"></div>
         </div>
       </div>
     </>

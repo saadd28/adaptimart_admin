@@ -71,6 +71,11 @@ thead {
     cursor: pointer;
     margin-right: 0.5em;
 }
+
+.product_table_data_actions_container{
+  display: flex;
+  align-items: center;
+}
 /* END TABLE ROW CSS */
 
 

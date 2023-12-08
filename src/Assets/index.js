@@ -12,9 +12,22 @@ export { default as AdminDirectoryPathArrow } from "./admin_directory_path_arrow
 export { default as AdminSearchIcon } from "./admin_search_icon.svg";
 export { default as AdminProductEditIcon } from "./admin_product_actions_edit_icon.svg";
 export { default as AdminProductTrashIcon } from "./admin_product_actions__trash_icon.svg";
+export { default as AdminProductViewIcon } from "./admin_product_actions__view_icon.svg";
 export { default as AdminAddProductMediaBG } from "./admin_addproduct_media_bg.svg";
 export { default as NavbarProductLogo } from "./navbar_products_logo.svg";
 export { default as NavbarTruckLogo } from "./navbar_truck_logo.svg";
 export { default as NavbarCardLogo } from "./navbar_card_logo.svg";
 export { default as NavbarCartLogo } from "./navbar_cart_logo.svg";
 export { default as NavbarUserLogo } from "./navbar_users_logo.svg";
+
+export { default as ViewOrderCustomerIcon } from "./view_order_customer_icon.svg";
+export { default as ViewOrderDateIcon } from "./view_order_date_icon.svg";
+export { default as ViewOrderDeliveredIcon } from "./view_order_delivered_icon.svg";
+export { default as ViewOrderEmailIcon } from "./view_order_email_icon.svg";
+export { default as ViewOrderLocationIcon } from "./view_order_location_icon.svg";
+export { default as ViewOrderPaymentIcon } from "./view_order_payment_icon.svg";
+export { default as ViewOrderPhoneIcon } from "./view_order_phone_icon.svg";
+export { default as ViewOrderPlacedIcon } from "./view_order_placed_icon.svg";
+export { default as ViewOrderProcessedIcon } from "./view_order_processed_icon.svg";
+export { default as ViewOrderShippedIcon } from "./view_order_shipped_icon.svg";
+export { default as ViewOrderShippingIcon } from "./view_order_shipping_icon.svg";

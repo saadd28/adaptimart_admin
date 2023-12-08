@@ -11,3 +11,9 @@ html {
   font-size: 62.5%;
   overflow-x: hidden;
 }
+
+
+input:focus-visible{
+  border: 2px solid #18abb1 !important;
+  outline: none;
+}

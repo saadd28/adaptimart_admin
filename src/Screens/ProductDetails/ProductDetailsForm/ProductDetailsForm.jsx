@@ -85,7 +85,7 @@ export default function ProductDetailsForm() {
           // Handle any errors
           console.error("Error uploading file:", error);
         });
-        setUpdateProduct(false)
+      setUpdateProduct(false);
     } else {
       addproduct(formData)
         .then((response) => {
