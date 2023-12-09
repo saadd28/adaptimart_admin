@@ -82,7 +82,7 @@ const ReturnsViewTableRow = ({ data, setProductList, index }) => {
             <img
               src={NonDamagedIcon}
               alt=""
-              className="product_table_data_edit_action_img"
+              className="product_table_data_edit_action_img svg_color"
               onClick={(event) => {
                 // editProduct(data);
               }}
@@ -90,7 +90,7 @@ const ReturnsViewTableRow = ({ data, setProductList, index }) => {
             <img
               src={DamagedIcon}
               alt=""
-              className="product_table_data_edit_action_img"
+              className="product_table_data_edit_action_img svg_color"
               onClick={(event) => {
                 // deleteProduct(data);
               }}

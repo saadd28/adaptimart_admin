@@ -33,3 +33,7 @@ export { default as ViewOrderShippedIcon } from "./view_order_shipped_icon.svg";
 export { default as ViewOrderShippingIcon } from "./view_order_shipping_icon.svg";
 export { default as DamagedIcon } from "./damaged_icon.svg";
 export { default as NonDamagedIcon } from "./non_damaged_icon.svg";
+export { default as BlockUserIcon } from "./block_user_icon.svg";
+export { default as UnBlockUserIcon } from "./unblock_user_icon.svg";
+export { default as UserProfilePic } from "./user_profile_pic.png";
+export { default as UserDetailsBG } from "./user_details_bg.svg";

@@ -20,6 +20,8 @@ import EditOrderDetails from "./Screens/EditOrderDetails/EditOrderDetails";
 import EditInventory from "./Screens/EditInventory/EditInventory";
 import CouponDetails from "./Screens/CouponDetails/CouponDetails";
 import EditReturnDetails from "./Screens/EditReturnDetails/EditReturnDetails";
+import AddUserAdmin from "./Screens/AddUserAdmin/AddUserAdmin";
+import UserDetailsView from "./Screens/UserDetailsView/UserDetailsView";
 
 function App() {
   // const currentPath = window.location.pathname;
@@ -34,6 +36,8 @@ function App() {
           <Route path="/manage_products" element={<Products />} />
           <Route path="/product_details" element={<ProductDetails />} />
           <Route path="/manage_users" element={<Users />} />
+          <Route path="/add_user_admin" element={<AddUserAdmin />} />
+          <Route path="/view_user_details" element={<UserDetailsView />} />
           <Route path="/manage_orders" element={<Orders />} />
           <Route path="/view_order_details" element={<OrderDetailsView />} />
           <Route path="/edit_order_details" element={<EditOrderDetails />} />
