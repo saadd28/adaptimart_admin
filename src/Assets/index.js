@@ -31,3 +31,5 @@ export { default as ViewOrderPlacedIcon } from "./view_order_placed_icon.svg";
 export { default as ViewOrderProcessedIcon } from "./view_order_processed_icon.svg";
 export { default as ViewOrderShippedIcon } from "./view_order_shipped_icon.svg";
 export { default as ViewOrderShippingIcon } from "./view_order_shipping_icon.svg";
+export { default as DamagedIcon } from "./damaged_icon.svg";
+export { default as NonDamagedIcon } from "./non_damaged_icon.svg";

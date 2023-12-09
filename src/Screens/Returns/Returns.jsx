@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../../Compnents/Navbar/Navbar";
+import ReturnsTable from "./ReturnsTable/ReturnsTable";
 
 export default function Returns() {
   return (
@@ -10,7 +11,7 @@ export default function Returns() {
         <div className="products_main_container">
             {/* <ProductHeader /> */}
 
-            <ProductTable />
+            <ReturnsTable />
         </div>
       </div>
     </>

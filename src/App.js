@@ -19,6 +19,7 @@ import OrderDetailsView from "./Screens/OrderDetailsView/OrderDetailsView";
 import EditOrderDetails from "./Screens/EditOrderDetails/EditOrderDetails";
 import EditInventory from "./Screens/EditInventory/EditInventory";
 import CouponDetails from "./Screens/CouponDetails/CouponDetails";
+import EditReturnDetails from "./Screens/EditReturnDetails/EditReturnDetails";
 
 function App() {
   // const currentPath = window.location.pathname;
@@ -45,6 +46,7 @@ function App() {
           <Route path="/manage_shipments" element={<Shipments />} />
           <Route path="/shipment_details" element={<ShipmentDetails />} />
           <Route path="/manage_returns" element={<Returns />} />
+          <Route path="/edit_return_details" element={<EditReturnDetails />} />
         </Routes>
       </BrowserRouter>
     </>
