@@ -15,13 +15,13 @@ import { useNavigate } from "react-router-dom";
 const InventoryTableRow = ({ data, setProductsList, index }) => {
   const navigate = useNavigate();
 
-  // const editSupplier = (data) => {
-  //   navigate("/supplier_details", {
-  //     state: {
-  //       datatosend: data,
-  //     },
-  //   });
-  // };
+  const editInventory = (data) => {
+    navigate("/edit_inventory", {
+      state: {
+        datatosend: data,
+      },
+    });
+  };
   //   const deleteProduct = (data) => {
   //     console.log("delete product called");
 
@@ -89,7 +89,7 @@ const InventoryTableRow = ({ data, setProductsList, index }) => {
               alt=""
               className="product_table_data_edit_action_img"
               onClick={(event) => {
-                // editSupplier(data);
+                editInventory(data);
               }}
             />
             {/* <img

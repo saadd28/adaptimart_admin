@@ -113,6 +113,8 @@ export default function ShipmentDetailsForm() {
               onClick={() => {
                 saveshipment();
 
+                navigate("/manage_shipments");
+
                 //   navigate("/product_details");
               }}
             >

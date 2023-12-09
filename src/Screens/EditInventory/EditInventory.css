@@ -1,0 +1,116 @@
+.edit_inventory_main_container{
+    display: flex;
+    width: 100%;
+    /* border: 2px solid red; */
+    
+
+}
+
+.edit_inventory_product_details{
+    width: 40%;
+    /* border: 2px solid yellow; */
+    background-color: white;
+    padding: 2em;
+    border-radius: 8px;
+}
+
+.edit_inventory_product_details_title{
+    color: var(--neutral-black-black-700, #333843);
+
+    /* Display XS/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 28px; /* 155.556% */
+    letter-spacing: 0.09px;
+    padding-bottom: 1em;
+
+}
+
+.edit_inventory_product_details_header{
+    display: flex;
+    align-items: flex-start;
+    padding-top: 2em;
+    padding-bottom: 4em;
+
+}
+
+.edit_inventory_product_details_img{
+    width: 100px;
+    margin-right: 4em;
+
+}
+
+.edit_inventory_product_details_header_title_container{
+    color: var(--neutral-black-black-700, #333843);
+    /* text-align: center; */
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+
+}
+
+/* .edit_inventory_product_details_header_title_container_product_name{
+
+} */
+
+.edit_inventory_product_details_header_title_container_skuid{
+    color: #18ABB1;
+}
+
+.edit_inventory_stock_container{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.edit_inventory_stock_infocard_container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2em;
+
+}
+
+.edit_inventory_stock_infocard_title{
+    color: var(--neutral-black-black-600, #4D5464);
+
+    /* Text M/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.07px;
+}
+
+.edit_inventory_stock_infocard_count{
+    color: var(--neutral-black-black-800, #1A1C21);
+
+    /* Text M/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.07px;
+}
+
+.edit_inventory_update_container{
+    width: 60%;
+    background-color: white;
+    margin-left: 3em;
+    padding: 2em;
+    height: fit-content;
+    border-radius: 8px;
+}
+
+/* .edit_inventory_update_title{
+
+} */

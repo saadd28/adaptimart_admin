@@ -16,7 +16,7 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
   const navigate = useNavigate();
 
   const editOrder = (data) => {
-    navigate("/order_details", {
+    navigate("/edit_order_details", {
       state: {
         datatosend: data,
       },

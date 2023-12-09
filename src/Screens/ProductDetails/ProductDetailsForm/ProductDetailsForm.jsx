@@ -328,7 +328,7 @@ export default function ProductDetailsForm() {
                   }}
                 />
               </div>
-              <div className="product_details_form_input_container">
+              {/* <div className="product_details_form_input_container">
                 <div className="product_details_form_input_label">
                   Sub Category (if any)
                 </div>
@@ -341,7 +341,7 @@ export default function ProductDetailsForm() {
                     setSubCategory((SubCategory = e.target.value));
                   }}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
 

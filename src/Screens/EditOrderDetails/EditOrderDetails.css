@@ -1,0 +1,13 @@
+.edit_order_zero_row_container{
+    padding-bottom: 3em;
+}
+
+.edit_row_edit_status_container{
+    background-color: white;
+    /* width: 32%; */
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 2em;
+}

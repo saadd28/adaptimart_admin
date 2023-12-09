@@ -1,9 +1,12 @@
 import { Fade } from "react-reveal";
+import Navbar from "../../Compnents/Navbar/Navbar";
+import "./EditOrderDetails.css";
+
+import React, { useState } from "react";
 import {
   AdaptiMartLogoCart,
   AdminDirectoryPathArrow,
   AdminProfilePic,
-  // AdminSearchIcon,
   ViewOrderCustomerIcon,
   ViewOrderDateIcon,
   ViewOrderDeliveredIcon,
@@ -16,11 +19,7 @@ import {
   ViewOrderShippedIcon,
   ViewOrderShippingIcon,
 } from "../../Assets";
-import "./OrderDetailsView.css";
-
-import React, { useState } from "react";
-import Navbar from "../../Compnents/Navbar/Navbar";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const OrderViewTableRow = ({ data, setOrdersList, index }) => {
   //   const deleteProduct = (data) => {
@@ -80,7 +79,7 @@ const OrderViewTableRow = ({ data, setOrdersList, index }) => {
   );
 };
 
-export default function OrderDetailsView() {
+export default function EditOrderDetails() {
   const [ProductList, setProductList] = useState(null);
   const navigate = useNavigate();
 
@@ -163,10 +162,9 @@ export default function OrderDetailsView() {
                       color: "#667085",
                     }}
                   >
-                    View Order
+                    Edit Order
                   </div>
                 </div>
-                    
                 <div className="product_details_header_buttons_container">
                   <button
                     className="product_details_header_cancel_btn"
@@ -174,7 +172,18 @@ export default function OrderDetailsView() {
                       navigate("/manage_orders");
                     }}
                   >
-                    Go Back
+                    Cancel
+                  </button>
+
+                  <button
+                    className="prod_head_add_product_btn"
+                    onClick={() => {
+                    //   saveproduct();
+
+                      navigate("/manage_orders");
+                    }}
+                  >
+                    Save Order
                   </button>
                 </div>
               </div>
@@ -183,6 +192,16 @@ export default function OrderDetailsView() {
 
           {/* End Product Header */}
           <Fade right>
+            <div className="edit_order_zero_row_container">
+              <div className="edit_row_edit_status_container">
+                <div className="edit_row_edit_status_title order_view_info_card_title_container">
+                  Order Status
+                </div>
+
+                <input type="text" name="order_status" id="order_status" className="product_details_form_input"/>
+              </div>
+            </div>
+
             <div className="order_view_first_row_container">
               <div className="order_view_info_card">
                 <div className="order_view_info_card_title_container">
@@ -336,14 +355,14 @@ export default function OrderDetailsView() {
 
                     <tbody>
                       {/* {ProductsList
-                ? ProductsList.map((item, index) => (
-                    <ProductTableRow
-                      data={item}
-                      setProductsList={setProductsList}
-                      index={index}
-                    />
-                  ))
-                : ""} */}
+                  ? ProductsList.map((item, index) => (
+                      <ProductTableRow
+                        data={item}
+                        setProductsList={setProductsList}
+                        index={index}
+                      />
+                    ))
+                  : ""} */}
                       {data
                         ? data.map((item, index) => (
                             <OrderViewTableRow

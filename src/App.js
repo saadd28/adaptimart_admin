@@ -16,6 +16,8 @@ import ScrollToTop from "./Compnents/ScrollToTop/ScrollToTop";
 import SupplierDetails from "./Screens/SupplierDetails/SupplierDetails";
 import ShipmentDetails from "./Screens/ShipmentDetails/ShipmentDetails";
 import OrderDetailsView from "./Screens/OrderDetailsView/OrderDetailsView";
+import EditOrderDetails from "./Screens/EditOrderDetails/EditOrderDetails";
+import EditInventory from "./Screens/EditInventory/EditInventory";
 
 function App() {
   // const currentPath = window.location.pathname;
@@ -32,7 +34,9 @@ function App() {
           <Route path="/manage_users" element={<Users />} />
           <Route path="/manage_orders" element={<Orders />} />
           <Route path="/view_order_details" element={<OrderDetailsView />} />
+          <Route path="/edit_order_details" element={<EditOrderDetails />} />
           <Route path="/manage_inventory" element={<Inventory />} />
+          <Route path="/edit_inventory" element={<EditInventory />} />
           <Route path="/manage_supplier" element={<Suppliers />} />
           <Route path="/supplier_details" element={<SupplierDetails />} />
           <Route path="/manage_coupons" element={<Coupons />} />
