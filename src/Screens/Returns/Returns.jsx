@@ -6,6 +6,12 @@ export default function Returns() {
     <>
       <div className="dashboard_box">
         <Navbar />
+
+        <div className="products_main_container">
+            {/* <ProductHeader /> */}
+
+            <ProductTable />
+        </div>
       </div>
     </>
   );

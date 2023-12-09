@@ -18,6 +18,7 @@ import ShipmentDetails from "./Screens/ShipmentDetails/ShipmentDetails";
 import OrderDetailsView from "./Screens/OrderDetailsView/OrderDetailsView";
 import EditOrderDetails from "./Screens/EditOrderDetails/EditOrderDetails";
 import EditInventory from "./Screens/EditInventory/EditInventory";
+import CouponDetails from "./Screens/CouponDetails/CouponDetails";
 
 function App() {
   // const currentPath = window.location.pathname;
@@ -40,6 +41,7 @@ function App() {
           <Route path="/manage_supplier" element={<Suppliers />} />
           <Route path="/supplier_details" element={<SupplierDetails />} />
           <Route path="/manage_coupons" element={<Coupons />} />
+          <Route path="/coupon_details" element={<CouponDetails />} />
           <Route path="/manage_shipments" element={<Shipments />} />
           <Route path="/shipment_details" element={<ShipmentDetails />} />
           <Route path="/manage_returns" element={<Returns />} />
