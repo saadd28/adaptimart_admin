@@ -9,7 +9,12 @@ import {
   AdminProfilePic,
   UserDetailsBG,
   UserProfilePic,
+  ViewOrderCustomerIcon,
+  ViewOrderEmailIcon,
+  ViewOrderLocationIcon,
+  ViewOrderPhoneIcon,
   ViewOrderProcessedIcon,
+  ViewUserOrderCountIcon,
 } from "../../Assets";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -80,8 +85,7 @@ export default function UserDetailsView() {
     },
   ];
 
-  const count = Object.keys(data).length
-
+  const count = Object.keys(data).length;
 
   return (
     <>
@@ -147,11 +151,11 @@ export default function UserDetailsView() {
             <div className="user_details_main_container">
               <div className="user_details_user_infocard">
                 {/* <div className="user_details_user_infocard_bg"></div> */}
-                <img
+                {/* <img
                   src={UserDetailsBG}
                   alt=""
                   className="user_details_user_infocard_bg"
-                />
+                /> */}
                 <div className="user_details_user_infocard_header">
                   <img
                     src={UserProfilePic}
@@ -169,7 +173,7 @@ export default function UserDetailsView() {
                 <div className="user_details_user_infocard_details_container">
                   <div className="user_details_user_infocard_detailscard">
                     <img
-                      src={ViewOrderProcessedIcon}
+                      src={ViewOrderCustomerIcon}
                       alt=""
                       className="user_details_user_infocard_detailscard_img"
                     />
@@ -185,7 +189,7 @@ export default function UserDetailsView() {
                   </div>
                   <div className="user_details_user_infocard_detailscard">
                     <img
-                      src={ViewOrderProcessedIcon}
+                      src={ViewOrderEmailIcon}
                       alt=""
                       className="user_details_user_infocard_detailscard_img"
                     />
@@ -201,7 +205,7 @@ export default function UserDetailsView() {
                   </div>
                   <div className="user_details_user_infocard_detailscard">
                     <img
-                      src={ViewOrderProcessedIcon}
+                      src={ViewOrderPhoneIcon}
                       alt=""
                       className="user_details_user_infocard_detailscard_img"
                     />
@@ -217,7 +221,7 @@ export default function UserDetailsView() {
                   </div>
                   <div className="user_details_user_infocard_detailscard">
                     <img
-                      src={ViewOrderProcessedIcon}
+                      src={ViewOrderLocationIcon}
                       alt=""
                       className="user_details_user_infocard_detailscard_img"
                     />
@@ -233,7 +237,7 @@ export default function UserDetailsView() {
                   </div>
                   <div className="user_details_user_infocard_detailscard">
                     <img
-                      src={ViewOrderProcessedIcon}
+                      src={ViewUserOrderCountIcon}
                       alt=""
                       className="user_details_user_infocard_detailscard_img"
                     />

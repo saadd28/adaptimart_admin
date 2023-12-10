@@ -33,7 +33,10 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    margin-top: 8em;
+    /* margin-top: 8em; */
+    background-color: #53C5C9;
+    border-radius: 8px;
+    padding: 2em;
 
 
 }
@@ -47,6 +50,7 @@
 .user_details_user_infocard_header_username{
     color: var(--neutral-black-black-700, #333843);
     text-align: center;
+    /* color: white; */
     
     /* Text L/Medium */
     font-family: var(--Roboto);

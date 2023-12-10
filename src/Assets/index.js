@@ -35,5 +35,6 @@ export { default as DamagedIcon } from "./damaged_icon.svg";
 export { default as NonDamagedIcon } from "./non_damaged_icon.svg";
 export { default as BlockUserIcon } from "./block_user_icon.svg";
 export { default as UnBlockUserIcon } from "./unblock_user_icon.svg";
-export { default as UserProfilePic } from "./user_profile_pic.png";
+export { default as UserProfilePic } from "./user_profile_pic.jpeg";
 export { default as UserDetailsBG } from "./user_details_bg.svg";
+export { default as ViewUserOrderCountIcon } from "./view_customer_order_count_icon.svg";
