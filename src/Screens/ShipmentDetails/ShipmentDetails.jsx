@@ -9,7 +9,7 @@ export default function ShipmentDetails() {
         {/* MANAGE PRODUCTS IS NOT BEING HIGHLIGHTED */}
         <Navbar />
 
-        <div className="product_details_main_container">
+        <div className="products_main_container">
           {/* <ProductDetailsHeader /> */}
           <ShipmentDetailsForm />
         </div>

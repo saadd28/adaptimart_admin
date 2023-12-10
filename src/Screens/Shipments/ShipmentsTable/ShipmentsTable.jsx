@@ -245,7 +245,7 @@ export default function ShipmentsTable() {
                 <th className="table_heading">No.</th>
                 <th className="table_heading">Shipment Name</th>
                 <th className="table_heading">Shipment ID</th>
-                <th className="table_heading">Supplier ID</th>
+                <th className="table_heading">Supplier Name</th>
                 <th className="table_heading">Shipment Status</th>
                 <th className="table_heading">Date Added</th>
                 <th className="table_heading">Action</th>

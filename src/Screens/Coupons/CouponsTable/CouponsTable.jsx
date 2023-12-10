@@ -245,9 +245,9 @@ export default function CouponsTable() {
             <thead>
               <tr className="table_heading_row">
                 <th className="table_heading">No.</th>
-                <th className="table_heading">Coupn Descriptions</th>
+                <th className="table_heading">Coupon Description</th>
                 <th className="table_heading">Coupon Code</th>
-                <th className="table_heading">Discount Percentage</th>
+                <th className="table_heading">Discount (%)</th>
                 <th className="table_heading">Date Added</th>
                 <th className="table_heading">Action</th>
               </tr>

@@ -127,7 +127,7 @@ export default function AddUserAdmin() {
                   </div>
                   <div className="product_details_form_input_container">
                     <div className="product_details_form_input_label">
-                      LastName
+                      Last Name
                     </div>
 
                     <input

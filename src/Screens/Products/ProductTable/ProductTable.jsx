@@ -81,7 +81,6 @@ const ProductTableRow = ({ data, setProductsList, index }) => {
           {data.id}
         </td>
         <td className="product_table_data">{data.category}</td>
-        <td className="product_table_data">{data.stock}</td>
         <td className="product_table_data">${data.price}</td>
         <td className="product_table_data">
           {moment(data.created_on.split(".")[0]).format("D MMM YY")}
@@ -270,7 +269,6 @@ export default function ProductTable() {
                 <th className="table_heading">Product Name</th>
                 <th className="table_heading">SKU_ID</th>
                 <th className="table_heading">Category</th>
-                <th className="table_heading">Stock</th>
                 <th className="table_heading">Price</th>
                 <th className="table_heading">Date Added</th>
                 <th className="table_heading">Action</th>
