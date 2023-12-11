@@ -202,7 +202,32 @@ export const addadmin = (data) => {
 };
 
 
-// export const updatesupplier = (data) => {
-//   return axios.post("http://localhost:4000/api/supplier/update", data);
-// };
+
+// Product Stock APIs
+
+export const getallproductstock = () => {
+  return axios.get("http://localhost:4000/api/productStock/getall");
+};
+
+export const getproductstockbyname = (UserName) => {
+
+  const url = `http://localhost:4000/api/productStock/getbyname?name=${UserName}`;
+
+  return axios.get(url);
+};
+
+export const getproductstockbyid = (UserID) => {
+
+  const url = `http://localhost:4000/api/productStock/getbyid?id=${UserID}`;
+
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const updateproductstock = (data) => {
+  return axios.post("http://localhost:4000/api/productStock/update", data);
+};
+
+
+
 

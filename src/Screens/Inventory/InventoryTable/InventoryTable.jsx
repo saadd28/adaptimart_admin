@@ -9,8 +9,10 @@ import {
 } from "../../../Assets";
 import "./InventoryTable.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getallproductstock, getproductstockbyid, getproductstockbyname } from "../../../api/apis";
+import moment from "moment";
 
 const InventoryTableRow = ({ data, setProductsList, index }) => {
   const navigate = useNavigate();
@@ -79,8 +81,7 @@ const InventoryTableRow = ({ data, setProductsList, index }) => {
         <td className="product_table_data">{data.returning}</td>
         <td className="product_table_data">{data.damaged}</td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -90,16 +91,9 @@ const InventoryTableRow = ({ data, setProductsList, index }) => {
               className="product_table_data_edit_action_img"
               onClick={(event) => {
                 editInventory(data);
+                
               }}
             />
-            {/* <img
-              src={AdminProductTrashIcon}
-              alt=""
-              className="product_table_data_edit_action_img"
-              onClick={(event) => {
-                // deleteProduct(data);
-              }}
-            /> */}
           </div>
         </td>
       </tr>
@@ -160,9 +154,9 @@ export default function InventoryTable() {
     },
   ];
 
-  //   useEffect(() => {
-  //     getAllProducts(setProductsList);
-  //   }, []);
+    useEffect(() => {
+      getAllProducts(setProductsList);
+    }, []);
 
   return (
     <>
@@ -224,9 +218,9 @@ export default function InventoryTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  //   SearchType === 1
-                  //     ? getProductsByName(setProductsList, SearchName)
-                  //     : getProductsById(setProductsList, SearchName);
+                    SearchType === 1
+                      ? getProductsByName(setProductsList, SearchName)
+                      : getProductsById(setProductsList, SearchName);
                 }}
               />
             </div>
@@ -288,17 +282,8 @@ export default function InventoryTable() {
             </thead>
 
             <tbody>
-              {/* {ProductsList
+              {ProductsList
                 ? ProductsList.map((item, index) => (
-                    <ProductTableRow
-                      data={item}
-                      setProductsList={setProductsList}
-                      index={index}
-                    />
-                  ))
-                : ""} */}
-              {data
-                ? data.map((item, index) => (
                     <InventoryTableRow
                       data={item}
                       setProductsList={setProductsList}
@@ -313,3 +298,48 @@ export default function InventoryTable() {
     </>
   );
 }
+
+
+export const getAllProducts = (setProductsList) => {
+  getallproductstock()
+    .then((res) => {
+      console.log("Updated products list retrieved");
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
+    });
+};
+
+
+export const getProductsByName = (setProductsList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getproductstockbyname(SearchName)
+    .then((res) => {
+      console.log("Searched products list retrieved");
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
+    });
+};
+
+export const getProductsById = (setProductsList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getproductstockbyid(SearchName)
+    .then((res) => {
+      console.log("Searched products list retrieved");
+      console.log("res", res);
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
+    });
+};
+

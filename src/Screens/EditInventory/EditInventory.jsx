@@ -14,13 +14,35 @@ import {
 import Navbar from "../../Compnents/Navbar/Navbar";
 import "./EditInventory.css";
 
-import React from "react";
+import React, { useState } from "react";
 import { Fade } from "react-reveal";
+import { updateproductstock } from "../../api/apis";
 
 export default function EditInventory() {
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state ? location.state.datatosend : null;
+  let [AvailableStock, setAvailableStock] = useState(0);
+
+  const saveInventory = () => {
+    let formData = {
+      available: AvailableStock,
+      id: data.id ? data.id : 0,
+    };
+    console.log("formData", formData);
+    updateproductstock(formData)
+      .then((response) => {
+        if (response.status === 200) {
+          navigate("/manage_inventory");
+          alert("Inventory Updated Successfully");
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error("Error In Updating Inventory:", error);
+      });
+  };
+
   return (
     <>
       <div className="dashboard_box">
@@ -88,7 +110,7 @@ export default function EditInventory() {
                   <button
                     className="prod_head_add_product_btn"
                     onClick={() => {
-                      //   saveproduct();
+                      saveInventory();
 
                       navigate("/manage_inventory");
                     }}
@@ -188,10 +210,10 @@ export default function EditInventory() {
                   <input
                     type="number"
                     className="product_details_form_input"
-                    //   value={Category}
-                    //   onChange={(e) => {
-                    //     setCategory((Category = e.target.value));
-                    //   }}
+                    value={AvailableStock}
+                    onChange={(e) => {
+                      setAvailableStock((AvailableStock = e.target.value));
+                    }}
                   />
                 </div>
               </div>
