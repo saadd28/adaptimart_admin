@@ -8,12 +8,13 @@ import {
 } from "../../../Assets";
 import "./SuppliersTable.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import moment from "moment/moment";
-import { getallproducts } from "../../../api/apis";
+import { deletesupplier, getallproducts, getallsuppliers, getsupplierbyid, getsupplierbyname } from "../../../api/apis";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
-const SupplierTableRow = ({ data, setProductsList, index }) => {
+const SupplierTableRow = ({ data, setSuppliersList, index }) => {
   const navigate = useNavigate();
 
   const editSupplier = (data) => {
@@ -23,29 +24,29 @@ const SupplierTableRow = ({ data, setProductsList, index }) => {
       },
     });
   };
-  //   const deleteProduct = (data) => {
-  //     console.log("delete product called");
+  const deleteSupplier = (data) => {
+    console.log("delete Supplier called");
 
-  //     let delObj = {
-  //       id: data ? data.id : 0,
-  //     };
-  //     deleteproduct(delObj)
-  //       .then((res) => {
-  //         console.log("resp", res);
+    let delObj = {
+      id: data ? data.id : 0,
+    };
+    deletesupplier(delObj)
+      .then((res) => {
+        console.log("resp", res);
 
-  //         if (res.status === 200) {
-  //           if (res.data.affectedRows === 1) {
-  //             console.log("resp", res);
-  //             alert("Product Deleted Successfully");
-  //             getAllProducts(setProductsList);
-  //           }
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log("err", err);
-  //         alert("Please check your connection");
-  //       });
-  //   };
+        if (res.status === 200) {
+          if (res.data.affectedRows === 1) {
+            console.log("resp", res);
+            alert("Supplier Deleted Successfully");
+            getAllSuppliers(setSuppliersList);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Supplier Deletion Failed");
+      });
+  };
 
   return (
     <>
@@ -69,8 +70,7 @@ const SupplierTableRow = ({ data, setProductsList, index }) => {
           {data.address}, {data.city}
         </td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -87,7 +87,7 @@ const SupplierTableRow = ({ data, setProductsList, index }) => {
               alt=""
               className="product_table_data_edit_action_img"
               onClick={(event) => {
-                // deleteProduct(data);
+                deleteSupplier(data);
               }}
             />
           </div>
@@ -98,45 +98,15 @@ const SupplierTableRow = ({ data, setProductsList, index }) => {
 };
 
 export default function SuppliersTable() {
-  const [ProductsList, setProductsList] = useState(null);
+  const [SuppliersList, setSuppliersList] = useState(null);
   const [SearchType, setSearchType] = useState(1); // 1 for name, 2 for id
   let [SearchName, setSearchName] = useState("");
   const navigate = useNavigate();
 
-  let data = [
-    {
-      name: "ABC",
-      id: 1,
-      contact_name: "XYZ",
-      address: "123, XYZ Road",
-      city: "Washington",
-      created_on: "20-10-2023",
-    },
-    {
-      name: "ABC",
-      id: 2,
-      contact_name: "XYZ",
-      address: "123, XYZ Road",
-      city: "Washington",
-      created_on: "20-10-2023",
-    },
-    {
-      name: "ABC",
-      id: 3,
-      contact_name: "XYZ",
-      address: "123, XYZ Road",
-      city: "Washington",
-      created_on: "20-10-2023",
-    },
-    {
-      name: "ABC",
-      id: 4,
-      contact_name: "XYZ",
-      address: "123, XYZ Road",
-      city: "Washington",
-      created_on: "20-10-2023",
-    },
-  ];
+  useEffect(() => {
+    getAllSuppliers(setSuppliersList);
+    console.log("Suppliers List:", SuppliersList);
+  }, []);
 
   return (
     <>
@@ -198,9 +168,9 @@ export default function SuppliersTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  //   SearchType === 1
-                  // ? getProductsByName(setProductsList, SearchName)
-                  // : getProductsById(setProductsList, SearchName);
+                    SearchType === 1
+                  ? getSupplierByName(setSuppliersList, SearchName)
+                  : getSupplierById(setSuppliersList, SearchName);
                 }}
               />
             </div>
@@ -259,24 +229,24 @@ export default function SuppliersTable() {
             </thead>
 
             <tbody>
-              {/* {ProductsList
-                ? ProductsList.map((item, index) => (
-                    <ProductTableRow
-                      data={item}
-                      setProductsList={setProductsList}
-                      index={index}
-                    />
-                  ))
-                : ""} */}
-              {data
-                ? data.map((item, index) => (
+              {SuppliersList
+                ? SuppliersList.map((item, index) => (
                     <SupplierTableRow
                       data={item}
-                      setProductsList={setProductsList}
+                      setSuppliersList={setSuppliersList}
                       index={index}
                     />
                   ))
                 : ""}
+              {/* {data
+                ? data.map((item, index) => (
+                    <SupplierTableRow
+                      data={item}
+                      setSuppliersList={setSuppliersList}
+                      index={index}
+                    />
+                  ))
+                : ""} */}
             </tbody>
           </table>
         </div>
@@ -285,13 +255,46 @@ export default function SuppliersTable() {
   );
 }
 
-// export const getAllProducts = (setProductsList) => {
-//   getallproducts()
-//     .then((res) => {
-//       console.log("Updated products list retrieved");
-//       setProductsList(res.data);
-//     })
-//     .catch((err) => {
-//       console.log("Error fetching products:", err);
-//     });
-// };
+export const getAllSuppliers = (setSuppliersList) => {
+  getallsuppliers()
+    .then((res) => {
+      console.log("Updated Suppliers list retrieved");
+      setSuppliersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Suppliers:", err);
+    });
+};
+
+export const getSupplierByName = (setSuppliersList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getsupplierbyname(SearchName)
+    .then((res) => {
+      console.log("Searched Supplier list retrieved");
+      setSuppliersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching suppliers:", err);
+    });
+};
+
+export const getSupplierById = (setSuppliersList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getsupplierbyid(SearchName)
+    .then((res) => {
+      console.log("Searched Supplier list retrieved");
+      console.log("res", res);
+      setSuppliersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Suppliers:", err);
+    });
+};
+
+

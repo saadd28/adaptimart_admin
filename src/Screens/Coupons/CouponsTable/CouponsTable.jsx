@@ -105,6 +105,8 @@ export default function CouponsTable() {
     getAllCoupons(setCouponsList);
     console.log("Coupons List:", CouponsList);
   }, []);
+
+  
   return (
     <>
       {/* Product Header */}

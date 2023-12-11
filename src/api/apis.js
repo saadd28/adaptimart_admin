@@ -83,15 +83,6 @@ export const updateshipment = (data) => {
 };
 
 
-
-// Suppliers API
-
-export const getallsuppliers = () => {
-  return axios.get("http://localhost:4000/api/supplier/getall");
-};
-
-
-
 // Coupons API
 
 export const getallcoupons = () => {
@@ -122,10 +113,42 @@ export const addcoupon = (data) => {
   return axios.post("http://localhost:4000/api/coupon/add", data);
 };
 
-// export const getshipmentstatuslist = (ParentId) => {
-//   return axios.get(`http://localhost:4000/api/lookup/getbyparentid?id=${ParentId}`);
-// };
-
 export const updatecoupon = (data) => {
   return axios.post("http://localhost:4000/api/coupon/update", data);
+};
+
+
+
+// Suppliers API
+
+export const getallsuppliers = () => {
+  return axios.get("http://localhost:4000/api/supplier/getall");
+};
+
+export const deletesupplier = (data) => {
+  console.log("data", data);
+  return axios.put("http://localhost:4000/api/supplier/delete", data);
+};
+
+export const getsupplierbyname = (SupplierName) => {
+
+  const url = `http://localhost:4000/api/supplier/getbyname?name=${SupplierName}`;
+
+  return axios.get(url);
+};
+
+export const getsupplierbyid = (SupplierId) => {
+
+  const url = `http://localhost:4000/api/supplier/getbyid?id=${SupplierId}`;
+
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const addsupplier = (data) => {
+  return axios.post("http://localhost:4000/api/supplier/add", data);
+};
+
+export const updatesupplier = (data) => {
+  return axios.post("http://localhost:4000/api/supplier/update", data);
 };
