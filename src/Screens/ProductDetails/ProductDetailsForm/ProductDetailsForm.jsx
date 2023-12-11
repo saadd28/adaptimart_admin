@@ -12,7 +12,12 @@ import {
   AdminProfilePic,
 } from "../../../Assets";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addproduct, updateproduct } from "../../../api/apis";
+import {
+  addproduct,
+  getallcategorys,
+  getallsuppliers,
+  updateproduct,
+} from "../../../api/apis";
 import { Fade } from "react-reveal";
 
 export default function ProductDetailsForm() {
@@ -22,25 +27,30 @@ export default function ProductDetailsForm() {
   let [Description, setDescription] = useState("");
   let [Image, setImage] = useState(null);
   let [Price, setPrice] = useState(0);
-  let [Discount, setDiscount] = useState(0);
-  let [Category, setCategory] = useState("");
-  let [SubCategory, setSubCategory] = useState("");
+  let [ItemDiscount, setItemDiscount] = useState(0);
+  let [SupplierName, setSupplierName] = useState("");
+  let [CategoryName, setCategoryName] = useState("");
 
+  let [SupplierList, setSupplierList] = useState(null);
+  let [CategoryList, setCategoryList] = useState(null);
   let [UpdateProduct, setUpdateProduct] = useState(false);
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  let edit_product_data = null;
   //   let [product, setProduct] = useState({
   //     name: "",
   //     description: "",
   //     image: null,
   //     price: 0,
   //   });
-  const location = useLocation();
-  let edit_product_data = null;
   // setName(edit_product_data?edit_product_data.name:"");
   //   let [EditProductData, setEditProductData] = useState(null);
 
   useEffect(() => {
+    getAllSuppliers(setSupplierList);
+    getAllCategorys(setCategoryList);
+
     edit_product_data = location.state ? location.state.datatosend : null;
     if (edit_product_data !== null) {
       console.log("edit_product_data", edit_product_data);
@@ -50,34 +60,41 @@ export default function ProductDetailsForm() {
       setDescription((Description = edit_product_data.description));
       setImage((Image = "http://localhost:4000/" + edit_product_data.image));
       setPrice((Price = edit_product_data.price));
-      setDiscount((Discount = edit_product_data.discount));
-      setCategory((Category = edit_product_data.category));
-      setSubCategory((SubCategory = edit_product_data.sub_category));
+      setItemDiscount((ItemDiscount = edit_product_data.item_discount));
+      setCategoryName((CategoryName = edit_product_data.category_name));
+      setSupplierName((SupplierName = edit_product_data.supplier_name));
     }
   }, [location.state]);
+  // }, []);
+
+  const handleSupplierNameChange = (event) => {
+    setSupplierName(event.target.value);
+  };
+  const handleCategoryNameChange = (event) => {
+    setCategoryName(event.target.value);
+  };
 
   const saveproduct = () => {
-    const formData = new FormData();
-
-    formData.append("id", ID);
-    formData.append("name", Name);
-    formData.append("description", Description);
-    formData.append("image", Image);
-    formData.append("price", Price);
-    formData.append("discount", Discount);
-    formData.append("category", Category);
-    formData.append("sub_category", SubCategory);
-
-    console.log("formData", formData);
-
     if (UpdateProduct === true) {
+      const formData = new FormData();
+
+      formData.append("name", Name);
+      formData.append("description", Description);
+      formData.append("image", Image);
+      formData.append("price", Price);
+      formData.append("item_discount", ItemDiscount);
+      formData.append("categoryName", CategoryName);
+      formData.append("supplierName", SupplierName);
+      formData.append("id", ID);
+
+      console.log("formData", formData);
       updateproduct(formData)
         .then((response) => {
           // Handle the response from the server if needed
           // console.log("response", response);
           // console.log("File uploaded successfully");
           if (response.status === 200) {
-            navigate(-1);
+            navigate("/manage_products");
             alert("Product Updated Successfully");
           }
         })
@@ -87,13 +104,21 @@ export default function ProductDetailsForm() {
         });
       setUpdateProduct(false);
     } else {
+      const formData = new FormData();
+
+      formData.append("name", Name);
+      formData.append("description", Description);
+      formData.append("image", Image);
+      formData.append("price", Price);
+      formData.append("item_discount", ItemDiscount);
+      formData.append("categoryName", CategoryName);
+      formData.append("supplierName", SupplierName);
+
+      console.log("formData", formData);
       addproduct(formData)
         .then((response) => {
-          // Handle the response from the server if needed
-          // console.log("response", response);
-          // console.log("File uploaded successfully");
           if (response.status === 200) {
-            navigate(-1);
+            navigate("/manage_products");
             alert("Product Added Successfully");
           }
         })
@@ -102,23 +127,8 @@ export default function ProductDetailsForm() {
           console.error("Error uploading file:", error);
         });
     }
-
-    //   .then((res) => {
-    //     if (res.data.success) {
-    //       console.log("res", res);
-    //       navigate(-1);
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log("err", err);
-    //     alert("Please check your connection");
-    //   });
   };
 
-  //   const handleSectionOneData = (data) => {
-  //     setProductData(data);
-  //     console.log("data", data);
-  //   };
   return (
     <>
       <Fade top>
@@ -203,17 +213,7 @@ export default function ProductDetailsForm() {
                   value={Name}
                   className="product_details_form_input"
                   onChange={(event) => {
-                    //   console.log("scsc");
-                    //   const { name, value } = event.target;
-                    //   setProduct({
-                    //     ...product,
-                    //     [name]: value,
-                    //   });
-
                     setName((Name = event.target.value));
-                    // data.name = Name;
-                    // console.log("Name", data.name);
-                    // onDataUpdate(data);
                   }}
                 />
               </div>
@@ -231,9 +231,6 @@ export default function ProductDetailsForm() {
                   className="product_details_form_input"
                   onChange={(e) => {
                     setDescription((Description = e.target.value));
-                    // data.description = Description;
-                    // console.log("Description", data.description);
-                    // onDataUpdate(data);
                   }}
                 ></textarea>
               </div>
@@ -298,10 +295,10 @@ export default function ProductDetailsForm() {
 
                 <input
                   type="number"
-                  value={Discount}
+                  value={ItemDiscount}
                   className="media_image_upload_input"
                   onChange={(e) => {
-                    setDiscount((Discount = e.target.value));
+                    setItemDiscount((ItemDiscount = e.target.value));
                   }}
                 />
               </div>
@@ -319,14 +316,52 @@ export default function ProductDetailsForm() {
                   Category Name
                 </div>
 
-                <input
-                  type="text"
+                <select
+                  id="dropdown"
                   className="product_details_form_input"
-                  value={Category}
-                  onChange={(e) => {
-                    setCategory((Category = e.target.value));
-                  }}
-                />
+                  value={CategoryName}
+                  onChange={handleCategoryNameChange}
+                >
+                  <option
+                    value={
+                      edit_product_data ? edit_product_data.category_name : ""
+                    }
+                  >
+                    {edit_product_data ? CategoryName : "Select a Category..."}
+                  </option>
+                  {CategoryList
+                    ? CategoryList.map((item, index) => (
+                        <option value={item.name}>{item.name}</option>
+                      ))
+                    : ""}
+                </select>
+              </div>
+              <div className="product_details_form_input_container">
+                <div className="product_details_form_input_label">
+                  Supplier Name
+                </div>
+
+                <select
+                  id="dropdown"
+                  className="product_details_form_input"
+                  value={SupplierName}
+                  onChange={handleSupplierNameChange}
+                >
+                  <option
+                    value={
+                      edit_product_data ? edit_product_data.supplier_name : ""
+                    }
+                  >
+                    {edit_product_data
+                      ? SupplierName
+                      : "Select a Supplier Name..."}
+                  </option>
+                  {SupplierList
+                    ? SupplierList.map((item, index) => (
+                        <option value={item.name}>{item.name}</option>
+                      ))
+                    : ""}
+                </select>
               </div>
               {/* <div className="product_details_form_input_container">
                 <div className="product_details_form_input_label">
@@ -375,3 +410,25 @@ export default function ProductDetailsForm() {
     </>
   );
 }
+
+export const getAllSuppliers = (setSupplierList) => {
+  getallsuppliers()
+    .then((res) => {
+      console.log("Updated suppliers list retrieved", res.data);
+      setSupplierList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching suppliers:", err);
+    });
+};
+
+export const getAllCategorys = (setCategoryList) => {
+  getallcategorys()
+    .then((res) => {
+      console.log("Updated Categorys list retrieved", res.data);
+      setCategoryList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Categorys:", err);
+    });
+};

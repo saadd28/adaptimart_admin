@@ -152,3 +152,9 @@ export const addsupplier = (data) => {
 export const updatesupplier = (data) => {
   return axios.post("http://localhost:4000/api/supplier/update", data);
 };
+
+// Category APIs
+
+export const getallcategorys = () => {
+  return axios.get("http://localhost:4000/api/category/getall");
+};
