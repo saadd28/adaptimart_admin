@@ -174,6 +174,17 @@ export default function EditOrderDetails() {
                   >
                     Cancel
                   </button>
+                  <button
+                    className="prod_head_add_product_btn"
+                    style={{
+                      marginRight:"1em"
+                    }}
+                    onClick={() => {
+                      navigate("/manage_orders");
+                    }}
+                  >
+                    Change Status
+                  </button>
 
                   <button
                     className="prod_head_add_product_btn"
@@ -192,7 +203,7 @@ export default function EditOrderDetails() {
 
           {/* End Product Header */}
           <Fade right>
-            <div className="edit_order_zero_row_container">
+            {/* <div className="edit_order_zero_row_container">
               <div className="edit_row_edit_status_container">
                 <div className="edit_row_edit_status_title order_view_info_card_title_container">
                   Order Status
@@ -200,7 +211,7 @@ export default function EditOrderDetails() {
 
                 <input type="text" name="order_status" id="order_status" className="product_details_form_input"/>
               </div>
-            </div>
+            </div> */}
 
             <div className="order_view_first_row_container">
               <div className="order_view_info_card">

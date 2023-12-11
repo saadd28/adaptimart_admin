@@ -39,7 +39,7 @@ const ViewUserTableRow = ({ data, index }) => {
             <div>{data.product_name}</div>
           </div>
         </td>
-        <td className="product_table_data">{data.total_price}</td>
+        <td className="product_table_data">${data.total_price}</td>
         <td className="product_table_data">{data.status}</td>
         <td className="product_table_data">
           {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}

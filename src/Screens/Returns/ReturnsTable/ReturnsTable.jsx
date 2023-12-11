@@ -72,7 +72,7 @@ const ReturnsTableRow = ({ data, setReturnsList, index }) => {
           {data.id}
         </td>
         <td className="product_table_data">{data.status}</td>
-        <td className="product_table_data">$ {data.total_price}</td>
+        <td className="product_table_data">${data.total_price}</td>
         <td className="product_table_data">{data.payment_status}</td>
         <td className="product_table_data">
           {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}

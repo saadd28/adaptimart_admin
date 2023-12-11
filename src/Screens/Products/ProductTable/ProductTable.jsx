@@ -80,7 +80,7 @@ const ProductTableRow = ({ data, setProductsList, index }) => {
         >
           {data.id}
         </td>
-        <td className="product_table_data">{data.category}</td>
+        <td className="product_table_data">{data.category_name}</td>
         <td className="product_table_data">${data.price}</td>
         <td className="product_table_data">
           {moment(data.created_on.split(".")[0]).format("D MMM YY")}
