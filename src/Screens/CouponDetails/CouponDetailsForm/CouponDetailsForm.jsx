@@ -1,12 +1,82 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AdminDirectoryPathArrow, AdminProfilePic } from "../../../Assets";
 import "./CouponDetailsForm.css";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Fade } from "react-reveal";
+import { addcoupon, updatecoupon } from "../../../api/apis";
 
 export default function CouponDetailsForm() {
+  let [CouponCode, setCouponCode] = useState("");
+  let [CouponDescription, setCouponDescription] = useState("");
+  let [DiscountPercentage, setDiscountPercentage] = useState(0.0);
+  let [CouponID, setCouponID] = useState(0);
+
+  const [UpdateCoupon, setUpdateCoupon] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  let edit_coupon_data = null;
+
+  useEffect(() => {
+    edit_coupon_data = location.state ? location.state.datatosend : null;
+
+    if (edit_coupon_data !== null) {
+      console.log("edit_coupon_data", edit_coupon_data);
+
+      setUpdateCoupon(true);
+      setCouponCode((CouponCode = edit_coupon_data.code));
+      setCouponDescription((CouponDescription = edit_coupon_data.description));
+      setDiscountPercentage(
+        (DiscountPercentage = edit_coupon_data.discount_percentage)
+      );
+
+      setCouponID((CouponID = edit_coupon_data.id));
+    }
+  }, [location.state]);
+
+  const savecoupon = () => {
+    
+    if (UpdateCoupon === true) {
+      let formData = {
+        code: CouponCode,
+        description: CouponDescription,
+        discount_percentage: DiscountPercentage,
+        id: CouponID,
+      };
+      console.log("formData", formData);
+      updatecoupon(formData)
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/manage_coupons");
+            alert("Coupon Updated Successfully");
+          }
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error("Error Updating Coupon:", error);
+        });
+      setUpdateCoupon(false);
+    } else {
+      let formData = {
+        code: CouponCode,
+        description: CouponDescription,
+        discount_percentage: DiscountPercentage,
+      };
+      console.log("formData", formData);
+      addcoupon(formData)
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/manage_coupons");
+            alert("Coupon Added Successfully");
+          }
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error("Error adding coupon:", error);
+        });
+    }
+  };
+
   return (
     <>
       <Fade top>
@@ -60,7 +130,7 @@ export default function CouponDetailsForm() {
             <button
               className="prod_head_add_product_btn"
               onClick={() => {
-                // saveproduct();
+                savecoupon();
                 navigate("/manage_coupons");
               }}
             >
@@ -86,20 +156,10 @@ export default function CouponDetailsForm() {
                 <input
                   type="text"
                   className="product_details_form_input"
-                  // value={Name}
-                  // onChange={(event) => {
-                  //     //   console.log("scsc");
-                  //     //   const { name, value } = event.target;
-                  //   //   setProduct({
-                  //   //     ...product,
-                  //   //     [name]: value,
-                  //   //   });
-
-                  //   setName((Name = event.target.value));
-                  //   // data.name = Name;
-                  //   // console.log("Name", data.name);
-                  //   // onDataUpdate(data);
-                  // }}
+                  value={CouponCode}
+                  onChange={(event) => {
+                    setCouponCode((CouponCode = event.target.value));
+                  }}
                 />
               </div>
               <div className="product_details_form_input_container">
@@ -107,7 +167,16 @@ export default function CouponDetailsForm() {
                   Discount Percentage
                 </div>
 
-                <input type="number" className="product_details_form_input" />
+                <input
+                  type="number"
+                  className="product_details_form_input"
+                  value={DiscountPercentage}
+                  onChange={(event) => {
+                    setDiscountPercentage(
+                      (DiscountPercentage = event.target.value)
+                    );
+                  }}
+                />
               </div>
               <div className="product_details_form_input_container">
                 <div className="product_details_form_input_label">
@@ -117,16 +186,12 @@ export default function CouponDetailsForm() {
                 <textarea
                   name="description"
                   id="description"
-                  // cols="30"
                   rows="8"
                   className="product_details_form_input"
-                  // value={Description}
-                  // onChange={(e) => {
-                  //   setDescription((Description = e.target.value));
-                  //   // data.description = Description;
-                  //   // console.log("Description", data.description);
-                  //   // onDataUpdate(data);
-                  // }}
+                  value={CouponDescription}
+                  onChange={(e) => {
+                    setCouponDescription((CouponDescription = e.target.value));
+                  }}
                 ></textarea>
               </div>
             </div>

@@ -12,33 +12,34 @@ import {
   AdminSearchIcon,
 } from "../../../Assets";
 import moment from "moment";
+import { deletecoupon, getallcoupons, getcouponsbycode, getcouponsbyid } from "../../../api/apis";
 
 const CouponsTableRow = ({ data, setCouponsList, index }) => {
   const navigate = useNavigate();
 
-  // const deleteCoupon = (data) => {
-  //   console.log("delete product called");
+  const deleteCoupon = (data) => {
+    console.log("delete coupon called");
 
-  //   let delObj = {
-  //     id: data ? data.id : 0,
-  //   };
-  //   deleteproduct(delObj)
-  //     .then((res) => {
-  //       console.log("resp", res);
+    let delObj = {
+      id: data ? data.id : 0,
+    };
+    deletecoupon(delObj)
+      .then((res) => {
+        console.log("resp", res);
 
-  //       if (res.status === 200) {
-  //         if (res.data.affectedRows === 1) {
-  //           console.log("resp", res);
-  //           alert("Product Deleted Successfully");
-  //           getAllProducts(setCouponsList);
-  //         }
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log("err", err);
-  //       alert("Please check your connection");
-  //     });
-  // };
+        if (res.status === 200) {
+          if (res.data.affectedRows === 1) {
+            console.log("resp", res);
+            alert("Coupon Deleted Successfully");
+            getAllCoupons(setCouponsList);
+          }
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Please check your connection");
+      });
+  };
 
   const editCoupon = (data) => {
     navigate("/coupon_details", {
@@ -55,6 +56,7 @@ const CouponsTableRow = ({ data, setCouponsList, index }) => {
         <td className="product_table_data">
           <div>{data.description}</div>
         </td>
+        <td className="product_table_data">{data.id}</td>
         <td
           className="product_table_data"
           style={{
@@ -65,8 +67,7 @@ const CouponsTableRow = ({ data, setCouponsList, index }) => {
         </td>
         <td className="product_table_data">{data.discount_percentage}</td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -75,7 +76,7 @@ const CouponsTableRow = ({ data, setCouponsList, index }) => {
               alt=""
               className="product_table_data_edit_action_img"
               onClick={(event) => {
-                  editCoupon(data);
+                editCoupon(data);
               }}
             />
             <img
@@ -83,7 +84,7 @@ const CouponsTableRow = ({ data, setCouponsList, index }) => {
               alt=""
               className="product_table_data_edit_action_img"
               onClick={(event) => {
-                  // deleteCoupon(data);
+                deleteCoupon(data);
               }}
             />
           </div>
@@ -99,41 +100,11 @@ export default function CouponsTable() {
   let [SearchName, setSearchName] = useState("");
   const navigate = useNavigate();
 
-  let data = [
-    {
-      id: 1,
-      description: "25% Discount",
-      code: "DIS25",
-      discount_percentage: 25.0,
-      created_on: "12-10-2023",
-    },
-    {
-      id: 2,
-      description: "25% Discount",
-      code: "DIS25",
-      discount_percentage: 25.0,
-      created_on: "12-10-2023",
-    },
-    {
-      id: 3,
-      description: "25% Discount",
-      code: "DIS25",
-      discount_percentage: 25.0,
-      created_on: "12-10-2023",
-    },
-    {
-      id: 4,
-      description: "25% Discount",
-      code: "DIS25",
-      discount_percentage: 25.0,
-      created_on: "12-10-2023",
-    },
-  ];
 
-  //   useEffect(() => {
-  //     getAllProducts(setCouponsList);
-  //   }, []);
-
+  useEffect(() => {
+    getAllCoupons(setCouponsList);
+    console.log("Coupons List:", CouponsList);
+  }, []);
   return (
     <>
       {/* Product Header */}
@@ -194,9 +165,9 @@ export default function CouponsTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  // SearchType === 1
-                  //   ? getCouponsByName(setCouponsList, SearchName)
-                  //   : getCouponsById(setCouponsList, SearchName);
+                  SearchType === 1
+                    ? getCouponsByCode(setCouponsList, SearchName)
+                    : getCouponsById(setCouponsList, SearchName);
                 }}
               />
             </div>
@@ -246,6 +217,7 @@ export default function CouponsTable() {
               <tr className="table_heading_row">
                 <th className="table_heading">No.</th>
                 <th className="table_heading">Coupon Description</th>
+                <th className="table_heading">Coupon ID</th>
                 <th className="table_heading">Coupon Code</th>
                 <th className="table_heading">Discount (%)</th>
                 <th className="table_heading">Date Added</th>
@@ -254,17 +226,8 @@ export default function CouponsTable() {
             </thead>
 
             <tbody>
-              {/* {CouponsList
+              {CouponsList
                 ? CouponsList.map((item, index) => (
-                    <CouponsTableRow
-                      data={item}
-                      setCouponsList={setCouponsList}
-                      index={index}
-                    />
-                  ))
-                : ""} */}
-              {data
-                ? data.map((item, index) => (
                     <CouponsTableRow
                       data={item}
                       setCouponsList={setCouponsList}
@@ -280,43 +243,45 @@ export default function CouponsTable() {
   );
 }
 
-//   export const getAllProducts = (setCouponsList) => {
-//     getallproducts()
-//       .then((res) => {
-//         console.log("Updated products list retrieved");
-//         setCouponsList(res.data);
-//       })
-//       .catch((err) => {
-//         console.log("Error fetching products:", err);
-//       });
-//   };
-//   export const getCouponsByName = (setCouponsList, SearchName) => {
-//     let reqObj = {
-//       name: SearchName,
-//     };
-//     console.log("reqObj", reqObj);
-//     getcouponsbyname(SearchName)
-//       .then((res) => {
-//         console.log("Searched Coupons list retrieved");
-//         setCouponsList(res.data);
-//       })
-//       .catch((err) => {
-//         console.log("Error fetching products:", err);
-//       });
-//   };
+export const getAllCoupons = (setCouponsList) => {
+  getallcoupons()
+    .then((res) => {
+      console.log("Updated coupons list retrieved");
+      setCouponsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching coupons:", err);
+    });
+};
 
-//   export const getCouponsById = (setCouponsList, SearchName) => {
-//     let reqObj = {
-//       id: SearchName,
-//     };
-//     console.log("reqObj", reqObj);
-//     getproductsbyid(SearchName)
-//       .then((res) => {
-//         console.log("Searched products list retrieved");
-//         console.log("res", res);
-//         setCouponsList(res.data);
-//       })
-//       .catch((err) => {
-//         console.log("Error fetching products:", err);
-//       });
-//   };
+
+export const getCouponsByCode = (setCouponsList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getcouponsbycode(SearchName)
+    .then((res) => {
+      console.log("Searched Coupons list retrieved");
+      setCouponsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching coupons:", err);
+    });
+};
+
+export const getCouponsById = (setCouponsList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getcouponsbyid(SearchName)
+    .then((res) => {
+      console.log("Searched Coupons list retrieved");
+      console.log("res", res);
+      setCouponsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching coupons:", err);
+    });
+};

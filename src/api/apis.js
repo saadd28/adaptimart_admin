@@ -89,3 +89,43 @@ export const updateshipment = (data) => {
 export const getallsuppliers = () => {
   return axios.get("http://localhost:4000/api/supplier/getall");
 };
+
+
+
+// Coupons API
+
+export const getallcoupons = () => {
+  return axios.get("http://localhost:4000/api/coupon/getall");
+};
+
+export const deletecoupon = (data) => {
+  console.log("data", data);
+  return axios.put("http://localhost:4000/api/coupon/delete", data);
+};
+
+export const getcouponsbycode = (CouponCode) => {
+
+  const url = `http://localhost:4000/api/coupon/getbycode?code=${CouponCode}`;
+
+  return axios.get(url);
+};
+
+export const getcouponsbyid = (CouponId) => {
+
+  const url = `http://localhost:4000/api/coupon/getbyid?id=${CouponId}`;
+
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const addcoupon = (data) => {
+  return axios.post("http://localhost:4000/api/coupon/add", data);
+};
+
+// export const getshipmentstatuslist = (ParentId) => {
+//   return axios.get(`http://localhost:4000/api/lookup/getbyparentid?id=${ParentId}`);
+// };
+
+export const updatecoupon = (data) => {
+  return axios.post("http://localhost:4000/api/coupon/update", data);
+};
