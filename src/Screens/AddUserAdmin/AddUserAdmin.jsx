@@ -8,7 +8,7 @@ import {
   AdminProfilePic,
 } from "../../Assets";
 import { useLocation, useNavigate } from "react-router-dom";
-import { addproduct, updateproduct } from "../../api/apis";
+import { addadmin, addproduct, updateproduct } from "../../api/apis";
 import { Fade } from "react-reveal";
 import Navbar from "../../Compnents/Navbar/Navbar";
 
@@ -21,6 +21,30 @@ export default function AddUserAdmin() {
   let [Password, setPassword] = useState("");
   let [Image, setImage] = useState(null);
 
+  const saveAdmin = () => {
+    const formData = new FormData();
+
+    formData.append("first_name", FirstName);
+    formData.append("last_name", LastName);
+    formData.append("email", Email);
+    formData.append("phone", Phone);
+    formData.append("password", Password);
+    formData.append("profile_pic", Image);
+
+    console.log("formData", formData);
+    addadmin(formData)
+      .then((response) => {
+        if (response.status === 200) {
+          navigate("/manage_users");
+          alert("User Admin Added Successfully");
+        }
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.error("Error adding admin user:", error);
+      });
+  };
+
   return (
     <>
       <div className="dashboard_box">
@@ -32,7 +56,7 @@ export default function AddUserAdmin() {
           <Fade top>
             {/* Product Details Header */}
             <div className="prod_head_title_container">
-              <div className="prod_head_title">Product Details</div>
+              <div className="prod_head_title">Add User Admin</div>
 
               <img
                 src={AdminProfilePic}
@@ -80,7 +104,7 @@ export default function AddUserAdmin() {
                 <button
                   className="prod_head_add_product_btn"
                   onClick={() => {
-                    // saveproduct();
+                    saveAdmin();
 
                     navigate("/manage_users");
                   }}
@@ -111,17 +135,7 @@ export default function AddUserAdmin() {
                       value={FirstName}
                       className="product_details_form_input"
                       onChange={(event) => {
-                        //   console.log("scsc");
-                        //   const { name, value } = event.target;
-                        //   setProduct({
-                        //     ...product,
-                        //     [name]: value,
-                        //   });
-
                         setFirstName((FirstName = event.target.value));
-                        // data.name = Name;
-                        // console.log("Name", data.name);
-                        // onDataUpdate(data);
                       }}
                     />
                   </div>
@@ -204,7 +218,6 @@ export default function AddUserAdmin() {
 
                       <input
                         type="file"
-                        //   value={Image}
                         className="media_image_upload_input"
                         onChange={(e) => {
                           console.log("image", e.target.files[0]);

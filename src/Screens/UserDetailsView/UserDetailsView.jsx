@@ -17,6 +17,7 @@ import {
   ViewUserOrderCountIcon,
 } from "../../Assets";
 import { useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
 
 const ViewUserTableRow = ({ data, index }) => {
   const navigate = useNavigate();
@@ -29,21 +30,36 @@ const ViewUserTableRow = ({ data, index }) => {
           <div className="product_table_data_name_container">
             <img
               src={
-                data.image
-                  ? "http://localhost:4000/" + data.image
+                data.products
+                  ? data.products[0].product_image
+                    ? "http://localhost:4000/" + data.products[0].product_image
+                    : AdaptiMartLogoCart
                   : AdaptiMartLogoCart
               }
               alt=""
               className="product_table_data_img"
             />
-            <div>{data.product_name}</div>
+            <div>{data.products ? data.products[0].product_name : ""}</div>
           </div>
         </td>
         <td className="product_table_data">${data.total_price}</td>
-        <td className="product_table_data">{data.status}</td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {data.order_status === 5
+            ? "Placed"
+            : data.order_status === 6
+            ? "Processed"
+            : data.order_status === 7
+            ? "Shipped"
+            : data.order_status === 8
+            ? "Delivered"
+            : data.order_status === 9
+            ? "Returned"
+            : data.order_status === 10
+            ? "Catered"
+            : ""}
+        </td>
+        <td className="product_table_data">
+          {moment(data.date_placed.split(".")[0]).format("D MMM YY")}
         </td>
       </tr>
     </>
@@ -53,39 +69,11 @@ const ViewUserTableRow = ({ data, index }) => {
 export default function UserDetailsView() {
   const navigate = useNavigate();
   const location = useLocation();
-  let data2 = location.state ? location.state.datatosend : null;
-  let data = [
-    {
-      order_id: 1,
-      product_name: "Iphone",
-      total_price: 100,
-      status: "Processed",
-      created_on: "1-12-2023",
-    },
-    {
-      order_id: 2,
-      product_name: "Iphone",
-      total_price: 100,
-      status: "Processed",
-      created_on: "1-12-2023",
-    },
-    {
-      order_id: 3,
-      product_name: "Iphone",
-      total_price: 100,
-      status: "Processed",
-      created_on: "1-12-2023",
-    },
-    {
-      order_id: 4,
-      product_name: "Iphone",
-      total_price: 100,
-      status: "Processed",
-      created_on: "1-12-2023",
-    },
-  ];
+  let data = location.state ? location.state.datatosend : null;
+  const orders_count = location.state ? location.state.orders_count : 0;
 
-  const count = Object.keys(data).length;
+
+  console.log("data", data);
 
   return (
     <>
@@ -158,13 +146,17 @@ export default function UserDetailsView() {
                 /> */}
                 <div className="user_details_user_infocard_header">
                   <img
-                    src={UserProfilePic}
+                    src={
+                      data.profile_pic
+                        ? "http://localhost:4000/" + data.profile_pic
+                        : AdaptiMartLogoCart
+                    }
                     alt=""
                     className="user_details_user_infocard_header_img"
                   />
 
                   <div className="user_details_user_infocard_header_username">
-                    {data2.first_name + " " + data2.last_name}
+                    {data.first_name + " " + data.last_name}
                   </div>
                 </div>
 
@@ -183,7 +175,7 @@ export default function UserDetailsView() {
                         User ID
                       </div>
                       <div className="user_details_user_infocard_detailscard_content">
-                        ID-011221
+                        {data.user_id}
                       </div>
                     </div>
                   </div>
@@ -199,7 +191,7 @@ export default function UserDetailsView() {
                         Email
                       </div>
                       <div className="user_details_user_infocard_detailscard_content">
-                        i201826@nu.edu.pk
+                        {data.email}
                       </div>
                     </div>
                   </div>
@@ -215,7 +207,7 @@ export default function UserDetailsView() {
                         Phone Number
                       </div>
                       <div className="user_details_user_infocard_detailscard_content">
-                        {data2.phone}
+                        {data.phone}
                       </div>
                     </div>
                   </div>
@@ -231,7 +223,7 @@ export default function UserDetailsView() {
                         Address
                       </div>
                       <div className="user_details_user_infocard_detailscard_content">
-                        1833 Bel Meadow Drive, Fontana, California 92335, USA
+                        {data.address + " " + data.city}
                       </div>
                     </div>
                   </div>
@@ -247,7 +239,7 @@ export default function UserDetailsView() {
                         Total Orders
                       </div>
                       <div className="user_details_user_infocard_detailscard_content">
-                        {count}
+                        {orders_count}
                       </div>
                     </div>
                   </div>
@@ -287,8 +279,8 @@ export default function UserDetailsView() {
                     />
                   ))
                 : ""} */}
-                      {data
-                        ? data.map((item, index) => (
+                      {data.orders
+                        ? data.orders.map((item, index) => (
                             <ViewUserTableRow data={item} index={index} />
                           ))
                         : ""}

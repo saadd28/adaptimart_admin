@@ -158,3 +158,51 @@ export const updatesupplier = (data) => {
 export const getallcategorys = () => {
   return axios.get("http://localhost:4000/api/category/getall");
 };
+
+
+// Users APIs
+
+export const getallusers = () => {
+  return axios.get("http://localhost:4000/api/account/getall");
+};
+
+export const getusersbyname = (UserName) => {
+
+  const url = `http://localhost:4000/api/account/getbyname?name=${UserName}`;
+
+  return axios.get(url);
+};
+
+export const getusersbyid = (UserID) => {
+
+  const url = `http://localhost:4000/api/account/getbyid?id=${UserID}`;
+
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const blockuser = (UserID) => {
+
+  const url = `http://localhost:4000/api/account/blockUser?id=${UserID}`;
+
+  // Make a GET request with the constructed URL
+  return axios.post(url);
+};
+
+export const unblockuser = (UserID) => {
+
+  const url = `http://localhost:4000/api/account/unblockUser?id=${UserID}`;
+
+  // Make a GET request with the constructed URL
+  return axios.post(url);
+};
+
+export const addadmin = (data) => {
+  return axios.post("http://localhost:4000/api/account/adduseradmin", data);
+};
+
+
+// export const updatesupplier = (data) => {
+//   return axios.post("http://localhost:4000/api/supplier/update", data);
+// };
+

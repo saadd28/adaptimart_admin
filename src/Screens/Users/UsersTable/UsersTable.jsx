@@ -13,51 +13,63 @@ import {
   ViewOrderCustomerIcon,
 } from "../../../Assets";
 import {
+  blockuser,
   deleteproduct,
   getallproducts,
+  getallusers,
   getproductsbyid,
   getproductsbyname,
+  getusersbyid,
+  getusersbyname,
+  unblockuser,
 } from "../../../api/apis";
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Fade } from "react-reveal";
 
-const UserTableRow = ({ data, setProductsList, index }) => {
+const UserTableRow = ({ data, setUsersList, index }) => {
   const navigate = useNavigate();
 
-  // const deleteProduct = (data) => {
-  //   console.log("delete product called");
+  const blockUser = (data) => {
+    console.log("block user called");
+    const userID = data ? data.user_id : 0;
 
-  //   let delObj = {
-  //     id: data ? data.id : 0,
-  //   };
-  //   deleteproduct(delObj)
-  //     .then((res) => {
-  //       console.log("resp", res);
+    blockuser(userID)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("resp", res);
+          alert("User Blocked Successfully");
+          getAllUsers(setUsersList);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Please check your connection");
+      });
+  };
 
-  //       if (res.status === 200) {
-  //         if (res.data.affectedRows === 1) {
-  //           console.log("resp", res);
-  //           alert("Product Deleted Successfully");
-  //           getAllProducts(setProductsList);
-  //         }
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log("err", err);
-  //       alert("Please check your connection");
-  //     });
-  // };
+  const unBlockUser = (data) => {
+    console.log("unblock user called");
+    const userID = data ? data.user_id : 0;
 
-  // const editProduct = (data) => {
-  //   navigate("/product_details", {
-  //     state: {
-  //       datatosend: data,
-  //     },
-  //   });
-  // };
+    unblockuser(userID)
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("resp", res);
+          alert("User UnBlocked Successfully");
+          getAllUsers(setUsersList);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Please check your connection");
+      });
+  };
 
+
+
+  const orders_count = Object.keys(data.orders).length;
   return (
     <>
       <tr className="product_table_row">
@@ -76,14 +88,28 @@ const UserTableRow = ({ data, setProductsList, index }) => {
             <div>{data.first_name + " " + data.last_name}</div>
           </div>
         </td>
+        <td
+          className="product_table_data"
+          style={{
+            color: "#52C1C5",
+          }}
+        >
+          {data.user_id}
+        </td>
         <td className="product_table_data">{data.phone}</td>
-        <td className="product_table_data">{data.orders}</td>
-        <td className="product_table_data">
-          {data.status === 1 ? "Active" : "Blocked"}
+        <td className="product_table_data">{orders_count}</td>
+        <td className="product_table_data"
+        style={{
+          color:
+          data.user_status === 2
+          ? "Green"
+          : "Red"
+        }}
+        >
+          {data.user_status === 2 ? "Active" : "Blocked"}
         </td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -96,6 +122,7 @@ const UserTableRow = ({ data, setProductsList, index }) => {
                 navigate("/view_user_details", {
                   state: {
                     datatosend: data,
+                    orders_count: orders_count,
                   },
                 });
               }}
@@ -105,6 +132,7 @@ const UserTableRow = ({ data, setProductsList, index }) => {
               alt=""
               className="product_table_data_edit_action_img svg_color"
               onClick={(event) => {
+                blockUser(data);
                 // editProduct(data);
               }}
             />
@@ -114,6 +142,7 @@ const UserTableRow = ({ data, setProductsList, index }) => {
               className="product_table_data_edit_action_img svg_color"
               onClick={(event) => {
                 // deleteProduct(data);
+                unBlockUser(data);
               }}
             />
           </div>
@@ -129,44 +158,9 @@ export default function UsersTable() {
   let [SearchName, setSearchName] = useState("");
   const navigate = useNavigate();
 
-  let data = [
-    {
-      id: 1,
-      first_name: "Saad",
-      last_name: "Khan",
-      phone: "123456789",
-      orders: 12,
-      status: 1,
-      created_on: "12-2-2023",
-    },
-    {
-      id: 2,
-      first_name: "Saad",
-      last_name: "Khan",
-      phone: "123456789",
-      orders: 12,
-      status: 1,
-      created_on: "12-2-2023",
-    },
-    {
-      id: 3,
-      first_name: "Saad",
-      last_name: "Khan",
-      phone: "123456789",
-      orders: 12,
-      status: 1,
-      created_on: "12-2-2023",
-    },
-    {
-      id: 4,
-      first_name: "Saad",
-      last_name: "Khan",
-      phone: "123456789",
-      orders: 12,
-      status: 1,
-      created_on: "12-2-2023",
-    },
-  ];
+  useEffect(() => {
+    getAllUsers(setUsersList);
+  }, []);
 
   return (
     <>
@@ -228,9 +222,9 @@ export default function UsersTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  //   SearchType === 1
-                  //     ? getProductsByName(setUsersList, SearchName)
-                  //     : getProductsById(setUsersList, SearchName);
+                  SearchType === 1
+                    ? getUsersByName(setUsersList, SearchName)
+                    : getUsersById(setUsersList, SearchName);
                 }}
               />
             </div>
@@ -280,6 +274,7 @@ export default function UsersTable() {
               <tr className="table_heading_row">
                 <th className="table_heading">No.</th>
                 <th className="table_heading">User Name</th>
+                <th className="table_heading">User ID</th>
                 <th className="table_heading">Phone</th>
                 <th className="table_heading">Orders</th>
                 <th className="table_heading">Status</th>
@@ -289,16 +284,17 @@ export default function UsersTable() {
             </thead>
 
             <tbody>
-              {/* {UsersList
+              {UsersList
                 ? UsersList.map((item, index) => (
-                    <ProductTableRow
+                    <UserTableRow
+                      key={item.id}
                       data={item}
                       setUsersList={setUsersList}
                       index={index}
                     />
                   ))
-                : ""} */}
-              {data
+                : ""}
+              {/* {data
                 ? data.map((item, index) => (
                     <UserTableRow
                       data={item}
@@ -306,7 +302,7 @@ export default function UsersTable() {
                       index={index}
                     />
                   ))
-                : ""}
+                : ""} */}
             </tbody>
           </table>
         </div>
@@ -314,3 +310,46 @@ export default function UsersTable() {
     </>
   );
 }
+
+export const getAllUsers = (setUsersList) => {
+  getallusers()
+    .then((res) => {
+      console.log("Updated users list retrieved");
+      setUsersList(res.data);
+      console.log("res.data", res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching users:", err);
+    });
+};
+
+export const getUsersByName = (setUsersList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getusersbyname(SearchName)
+    .then((res) => {
+      console.log("Searched users list retrieved");
+      setUsersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching users:", err);
+    });
+};
+
+export const getUsersById = (setUsersList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getusersbyid(SearchName)
+    .then((res) => {
+      console.log("Searched users list retrieved");
+      console.log("res", res);
+      setUsersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching users:", err);
+    });
+};
