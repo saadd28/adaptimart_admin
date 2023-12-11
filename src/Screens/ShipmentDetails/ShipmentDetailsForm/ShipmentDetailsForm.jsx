@@ -2,60 +2,118 @@ import { Fade } from "react-reveal";
 import { AdminDirectoryPathArrow, AdminProfilePic } from "../../../Assets";
 import "./ShipmentDetailsForm.css";
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  addshipment,
+  getallsuppliers,
+  getshipmentstatuslist,
+  updateshipment,
+} from "../../../api/apis";
 
 export default function ShipmentDetailsForm() {
-  const navigate = useNavigate();
   let [Name, setName] = useState("");
   let [SupplierName, setSupplierName] = useState("");
-  let [Status, setStatus] = useState("");
+  let [ShipmentStatus, setShipmentStatus] = useState("");
+  let [ShipmentID, setShipmentID] = useState(0);
 
+  const [SupplierList, setSupplierList] = useState(null);
+  const [ShipmentStatusList, setShipmentStatusList] = useState(null);
+  const [UpdateShipment, setUpdateShipment] = useState(false);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  let edit_shipment_data = null;
+
+  useEffect(() => {
+    getAllSuppliers(setSupplierList);
+    getShipmentStatusList(setShipmentStatusList);
+    console.log("SupplierList:", SupplierList);
+
+    edit_shipment_data = location.state ? location.state.datatosend : null;
+
+    if (edit_shipment_data !== null) {
+      console.log("edit_shipment_data", edit_shipment_data);
+
+      setUpdateShipment(true);
+      setName((Name = edit_shipment_data.name));
+      setSupplierName((SupplierName = edit_shipment_data.supplier_name));
+      setShipmentStatus(
+        (ShipmentStatus =
+          edit_shipment_data.status === 19
+            ? "In-transit"
+            : edit_shipment_data.status === 20
+            ? "Received"
+            : edit_shipment_data.status === 21
+            ? "Defected"
+            : ""));
+      setShipmentID((ShipmentID = edit_shipment_data.id))      
+    }
+  }, [location.state]);
+
+  // Handler function to update the selected value
+  const handleSupplierNameChange = (event) => {
+    setSupplierName(event.target.value);
+  };
+  // Handler function to update the selected value
+  const handleShipmentStatusChange = (event) => {
+    setShipmentStatus(event.target.value);
+  };
 
   const saveshipment = () => {
-    // const formData = new FormData();
-    // formData.append("id", ID);
-    // formData.append("name", Name);
-    // formData.append("description", Description);
-    // formData.append("image", Image);
-    // formData.append("price", Price);
-    // formData.append("discount", Discount);
-    // formData.append("category", Category);
-    // formData.append("sub_category", SubCategory);
     // console.log("formData", formData);
-    // if (UpdateProduct === true) {
-    //   updateproduct(formData)
-    //     .then((response) => {
-    //       // Handle the response from the server if needed
-    //       // console.log("response", response);
-    //       // console.log("File uploaded successfully");
-    //       if (response.status === 200) {
-    //         navigate(-1);
-    //         alert("Product Updated Successfully");
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       // Handle any errors
-    //       console.error("Error uploading file:", error);
-    //     });
-    //   setUpdateProduct(false);
-    // } else {
-    //   addproduct(formData)
-    //     .then((response) => {
-    //       // Handle the response from the server if needed
-    //       // console.log("response", response);
-    //       // console.log("File uploaded successfully");
-    //       if (response.status === 200) {
-    //         navigate(-1);
-    //         alert("Product Added Successfully");
-    //       }
-    //     })
-    //     .catch((error) => {
-    //       // Handle any errors
-    //       console.error("Error uploading file:", error);
-    //     });
-    // }
+    if (UpdateShipment === true) {
+      let formData = {
+        name: Name,
+        supplier_name: SupplierName,
+        status:
+          ShipmentStatus === "In-transit"
+            ? 19
+            : ShipmentStatus === "Received"
+            ? 20
+            : ShipmentStatus === "Defected"
+            ? 21
+            : 19,
+        id:ShipmentID   
+      };
+      console.log("formData", formData);
+      updateshipment(formData)
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/manage_shipments");
+            alert("Shipment Updated Successfully");
+          }
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error("Error uploading file:", error);
+        });
+      setUpdateShipment(false);
+    } else {
+      let formData = {
+        name: Name,
+        supplier_name: SupplierName,
+        status:
+          ShipmentStatus === "In-transit"
+            ? 19
+            : ShipmentStatus === "Received"
+            ? 20
+            : ShipmentStatus === "Defected"
+            ? 21
+            : 19,
+      };
+      addshipment(formData)
+        .then((response) => {
+          if (response.status === 200) {
+            navigate("/manage_shipments");
+            alert("Shipment Added Successfully");
+          }
+        })
+        .catch((error) => {
+          // Handle any errors
+          console.error("Error adding shipment:", error);
+        });
+    }
   };
 
   return (
@@ -144,17 +202,8 @@ export default function ShipmentDetailsForm() {
                   value={Name}
                   className="product_details_form_input"
                   onChange={(event) => {
-                    //   console.log("scsc");
-                    //   const { name, value } = event.target;
-                    //   setProduct({
-                    //     ...product,
-                    //     [name]: value,
-                    //   });
-
+                    console.log("name changing");
                     setName((Name = event.target.value));
-                    // data.name = Name;
-                    // console.log("Name", data.name);
-                    // onDataUpdate(data);
                   }}
                 />
               </div>
@@ -163,40 +212,48 @@ export default function ShipmentDetailsForm() {
                   Supplier Name
                 </div>
 
-                <input
-                  name="supplier_name"
-                  id="supplier_name"
-                  // cols="30"
-                  value={SupplierName}
+                <select
+                  id="dropdown"
                   className="product_details_form_input"
-                  onChange={(e) => {
-                    setSupplierName((SupplierName = e.target.value));
-                    // data.description = Description;
-                    // console.log("Description", data.description);
-                    // onDataUpdate(data);
-                  }}
-                />
+                  value={SupplierName}
+                  onChange={handleSupplierNameChange}
+                >
+                  <option
+                    value={
+                      edit_shipment_data ? edit_shipment_data.supplier_name : ""
+                    }
+                  >
+                    {edit_shipment_data
+                      ? edit_shipment_data.supplier_name
+                      : "Status..."}
+                  </option>
+                  {SupplierList
+                    ? SupplierList.map((item, index) => (
+                        <option value={item.name}>{item.name}</option>
+                      ))
+                    : ""}
+                </select>
               </div>
               <div className="product_details_form_input_container">
                 <div className="product_details_form_input_label">
                   Shipment Status
                 </div>
 
-                <input
-                  name="shipment_status"
-                  id="shipment_status"
-                  // cols="30"
-                  value={Status}
+                <select
+                  id="dropdown"
                   className="product_details_form_input"
-                  onChange={(e) => {
-                    setStatus(
-                      (Status = e.target.value)
-                    );
-                    // data.description = Description;
-                    // console.log("Description", data.description);
-                    // onDataUpdate(data);
-                  }}
-                />
+                  value={ShipmentStatus}
+                  onChange={handleShipmentStatusChange}
+                >
+                  <option value={edit_shipment_data ? ShipmentStatus : ""}>
+                    {edit_shipment_data ? ShipmentStatus : ""}
+                  </option>
+                  {ShipmentStatusList
+                    ? ShipmentStatusList.map((item, index) => (
+                        <option value={item.name}>{item.name}</option>
+                      ))
+                    : ""}
+                </select>
               </div>
             </div>
           </div>
@@ -205,3 +262,24 @@ export default function ShipmentDetailsForm() {
     </>
   );
 }
+
+export const getAllSuppliers = (setSupplierList) => {
+  getallsuppliers()
+    .then((res) => {
+      console.log("Updated suppliers list retrieved", res.data);
+      setSupplierList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching suppliers:", err);
+    });
+};
+export const getShipmentStatusList = (setShipmentStatusList) => {
+  getshipmentstatuslist(18)
+    .then((res) => {
+      console.log("Updated shipment status list retrieved", res.data);
+      setShipmentStatusList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching shipment status list:", err);
+    });
+};
