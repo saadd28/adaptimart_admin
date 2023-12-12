@@ -282,3 +282,38 @@ export const markasnondamaged = (data) => {
 export const markasdamaged = (data) => {
   return axios.post("http://localhost:4000/api/return/markasDamaged", data);
 };
+
+
+// Dashboard APIs
+export const gettotalrevenue = () => {
+  
+  const url = "http://localhost:4000/api/dashboard/gettotalrevenue";
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const gettotalsales = () => {
+  
+  const url = "http://localhost:4000/api/dashboard/gettotalsales";
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const gettotalproductskus = () => {
+  
+  const url = "http://localhost:4000/api/dashboard/gettotalskus";
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const gettotalusers = () => {
+  
+  const url = "http://localhost:4000/api/dashboard/gettotalusers";
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+

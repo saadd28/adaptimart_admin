@@ -10,12 +10,13 @@
 .dashboard_statistics_row{
     display: flex;
     justify-content: space-between;
+    padding-top: 5em;
 
 
 }
 
 .dashboard_statistics_infocard{
-    width: 32%;
+    width: 24%;
     background-color: white;
     border-radius: 8px;
     padding: 2em;
@@ -55,3 +56,108 @@
     line-height: 32px; /* 133.333% */
     letter-spacing: 0.12px;
 }
+
+.dashboard_graph_row{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3em;
+
+}
+
+.dashboard_graph_input_container{
+
+    width: 25%;
+    background-color: white;
+
+    border-radius: 8px;
+    height: fit-content;
+    padding: 2em;
+
+
+
+}
+
+.dashboard_graph_input_label{
+    color: var(--neutral-black-black-500, #667085);
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+    padding: 0em 0 0.2em 0;
+
+}
+
+.dashboard_graph_input{
+    padding: 0.8em 1em;
+    background-color: #f9f9fc;
+    border-radius: 8px;
+    margin-top: 0.5em;
+    /* margin-bottom: 2em; */
+    width: 100%;
+  
+    border: 1px solid gray;
+
+}
+
+.dashboard_graph_btn{
+    
+    color: white;
+    /* Text M/Semibold */
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    /* font-weight: 600; */
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.07px;
+  
+    padding: 0.5em 1em;
+    border-radius: 8px;
+  
+    border: none;
+  
+    cursor: pointer;
+  
+    background-color: #18abb1;
+    margin-top: 1em;
+    width: 100%;
+}
+
+.dashboard_graph_btn:hover {
+    background-color: #1dc1c7;
+}
+
+.dashboard_graph_container{
+    background-color: white;
+    border-radius: 8px;
+    width: 73%;
+
+    color: var(--neutral-black-black-500, #667085);
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+    padding: 1em 0 0.2em 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.dashboard_graph_title{
+    text-align: center;
+    /* margin-bottom: 1em; */
+    font-family: var(--Roboto);
+    font-size: 2.5rem;
+    padding-top: 1em;
+}
+
