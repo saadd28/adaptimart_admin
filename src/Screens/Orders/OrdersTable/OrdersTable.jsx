@@ -1,7 +1,7 @@
 import { Fade } from "react-reveal";
 import "./OrdersTable.css";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AdminDirectoryPathArrow,
   AdminProductEditIcon,
@@ -11,6 +11,12 @@ import {
   AdminSearchIcon,
 } from "../../../Assets";
 import { useNavigate } from "react-router-dom";
+import {
+  getallorders,
+  getordersbyid,
+  getordersbyname,
+} from "../../../api/apis";
+import moment from "moment";
 
 const OrderTableRow = ({ data, setOrdersList, index }) => {
   const navigate = useNavigate();
@@ -45,7 +51,7 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
   //           if (res.data.affectedRows === 1) {
   //             console.log("resp", res);
   //             alert("Product Deleted Successfully");
-  //             getAllProducts(setProductsList);
+  //             getAllProducts(setOrdersList);
   //           }
   //         }
   //       })
@@ -61,7 +67,7 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
         <td className="product_table_data">{index + 1}</td>
         <td className="product_table_data">
           <div className="product_table_data_name_container">
-            <div>{data.name}</div>
+            <div>{data.first_name + " " + data.last_name}</div>
           </div>
         </td>
         <td
@@ -70,14 +76,34 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
             color: "#52C1C5",
           }}
         >
-          {data.id}
+          {data.order_id}
         </td>
-        <td className="product_table_data">{data.status}</td>
-        <td className="product_table_data">${data.total_price}</td>
-        <td className="product_table_data">{data.payment_status}</td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {data.order_status === 5
+            ? "Placed"
+            : data.order_status === 6
+            ? "Processed"
+            : data.order_status === 7
+            ? "Shipped"
+            : data.order_status === 8
+            ? "Delivered"
+            : data.order_status === 9
+            ? "Returned"
+            : data.order_status === 10
+            ? "Catered"
+            : ""}
+        </td>
+        <td className="product_table_data">${data.total_price}</td>
+        <td
+          className="product_table_data"
+          style={{
+            color: "Green",
+          }}
+        >
+          Paid
+        </td>
+        <td className="product_table_data">
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -110,40 +136,9 @@ export default function OrdersTable() {
   let [SearchName, setSearchName] = useState("");
   const navigate = useNavigate();
 
-  let data = [
-    {
-      id: 1,
-      name: "XYZ",
-      status: "Processing",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 2,
-      name: "XYZ",
-      status: "Processing",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 3,
-      name: "XYZ",
-      status: "Processing",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 4,
-      name: "XYZ",
-      status: "Processing",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-  ];
+  useEffect(() => {
+    getAllOrders(setOrdersList);
+  }, []);
   return (
     <>
       {/* Product Header */}
@@ -178,15 +173,6 @@ export default function OrdersTable() {
                 Manage Orders
               </div>
             </div>
-
-            {/* <button
-              className="prod_head_add_product_btn"
-              onClick={() => {
-                navigate("/order_details");
-              }}
-            >
-              + Add Orders
-            </button> */}
           </div>
 
           <div className="prod_head_search_row_container">
@@ -204,9 +190,9 @@ export default function OrdersTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  //   SearchType === 1
-                  // ? getProductsByName(setProductsList, SearchName)
-                  // : getProductsById(setProductsList, SearchName);
+                  SearchType === 1
+                    ? getOrdersByName(setOrdersList, SearchName)
+                    : getOrdersById(setOrdersList, SearchName);
                 }}
               />
             </div>
@@ -266,17 +252,8 @@ export default function OrdersTable() {
             </thead>
 
             <tbody>
-              {/* {ProductsList
-                ? ProductsList.map((item, index) => (
-                    <ProductTableRow
-                      data={item}
-                      setProductsList={setProductsList}
-                      index={index}
-                    />
-                  ))
-                : ""} */}
-              {data
-                ? data.map((item, index) => (
+              {OrdersList
+                ? OrdersList.map((item, index) => (
                     <OrderTableRow
                       data={item}
                       setOrdersList={setOrdersList}
@@ -292,13 +269,44 @@ export default function OrdersTable() {
   );
 }
 
-// export const getAllProducts = (setProductsList) => {
-//   getallproducts()
-//     .then((res) => {
-//       console.log("Updated products list retrieved");
-//       setProductsList(res.data);
-//     })
-//     .catch((err) => {
-//       console.log("Error fetching products:", err);
-//     });
-// };
+export const getAllOrders = (setOrdersList) => {
+  getallorders()
+    .then((res) => {
+      console.log("Updated orders list retrieved", res.data);
+      setOrdersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching orders:", err);
+    });
+};
+
+export const getOrdersByName = (setOrdersList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getordersbyname(SearchName)
+    .then((res) => {
+      console.log("Searched Orders list retrieved");
+      setOrdersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Orders:", err);
+    });
+};
+
+export const getOrdersById = (setOrdersList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getordersbyid(SearchName)
+    .then((res) => {
+      console.log("Searched Orders list retrieved");
+      console.log("res", res);
+      setOrdersList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Orders:", err);
+    });
+};

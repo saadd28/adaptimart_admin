@@ -19,7 +19,9 @@ import {
   ViewOrderShippedIcon,
   ViewOrderShippingIcon,
 } from "../../Assets";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import moment from "moment";
+import { updateorderstatus } from "../../api/apis";
 
 const OrderViewTableRow = ({ data, setOrdersList, index }) => {
   //   const deleteProduct = (data) => {
@@ -53,14 +55,14 @@ const OrderViewTableRow = ({ data, setOrdersList, index }) => {
           <div className="product_table_data_name_container">
             <img
               src={
-                data.image
-                  ? "http://localhost:4000/" + data.image
+                data.product_image
+                  ? "http://localhost:4000/" + data.product_image
                   : AdaptiMartLogoCart
               }
               alt=""
               className="product_table_data_img"
             />
-            <div>{data.name}</div>
+            <div>{data.product_name}</div>
           </div>
         </td>
         <td
@@ -69,11 +71,13 @@ const OrderViewTableRow = ({ data, setOrdersList, index }) => {
             color: "#52C1C5",
           }}
         >
-          {data.sku_id}
+          {data.product_id}
         </td>
         <td className="product_table_data">{data.quantity}</td>
-        <td className="product_table_data">${data.price}</td>
-        <td className="product_table_data">${data.quantity * data.price}</td>
+        <td className="product_table_data">${data.product_price}</td>
+        <td className="product_table_data">
+          ${data.quantity * data.product_price}
+        </td>
       </tr>
     </>
   );
@@ -81,37 +85,39 @@ const OrderViewTableRow = ({ data, setOrdersList, index }) => {
 
 export default function EditOrderDetails() {
   const [ProductList, setProductList] = useState(null);
+  const ShippingRate = 5.0;
   const navigate = useNavigate();
+  const location = useLocation();
+  let data = location.state ? location.state.datatosend : null;
+  let order_id = data.order_id
+  let order_status = data.order_status
 
-  let data = [
-    {
-      id: 1,
-      name: "Smartwatch E2",
-      sku_id: 1,
-      quantity: 1,
-      price: 100,
-      date: "12-03-23",
-      time: "4:00",
-    },
-    {
-      id: 2,
-      name: "Smartwatch E2",
-      sku_id: 1,
-      quantity: 1,
-      price: 100,
-      date: "12-03-23",
-      time: "4:00",
-    },
-    {
-      id: 3,
-      name: "Smartwatch E2",
-      sku_id: 1,
-      quantity: 1,
-      price: 100,
-      date: "12-03-23",
-      time: "4:00",
-    },
-  ];
+  const products_count = Object.keys(data.products).length;
+
+  console.log("data received: ", data);
+
+  const updateOrder = (data) => {
+    console.log("update order called");
+
+    let formData = {
+      order_id: order_id,
+      status: order_status,
+    };
+    console.log("form data", formData)
+    updateorderstatus(formData)
+      .then((res) => {
+        console.log("resp", res);
+
+        if (res.status === 200) {
+          console.log("resp", res);
+          alert("Order Status Updated Successfully");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Failed to Update Order Status");
+      });
+  };
   return (
     <>
       <div className="dashboard_box">
@@ -174,22 +180,37 @@ export default function EditOrderDetails() {
                   >
                     Cancel
                   </button>
-                  <button
-                    className="prod_head_add_product_btn"
-                    style={{
-                      marginRight:"1em"
-                    }}
-                    onClick={() => {
-                      navigate("/manage_orders");
-                    }}
-                  >
-                    Change Status
-                  </button>
+                  {data.order_status !== 10 ? (
+                    <button
+                      className="prod_head_add_product_btn"
+                      style={{
+                        marginRight: "1em",
+                      }}
+                      onClick={() => {
+                        updateOrder();
+                        navigate("/manage_orders");
+                      }}
+                    >
+                      {data.order_status === 5
+                        ? "Process Order"
+                        : data.order_status === 6
+                        ? "Ship Order"
+                        : data.order_status === 7
+                        ? "Mark Delivered"
+                        : data.order_status === 8
+                        ? "Mark Returned"
+                        : data.order_status === 9
+                        ? "Mark Catered"
+                        : ""}
+                    </button>
+                  ) : (
+                    ""
+                  )}
 
                   <button
                     className="prod_head_add_product_btn"
                     onClick={() => {
-                    //   saveproduct();
+                      //   saveproduct();
 
                       navigate("/manage_orders");
                     }}
@@ -216,8 +237,22 @@ export default function EditOrderDetails() {
             <div className="order_view_first_row_container">
               <div className="order_view_info_card">
                 <div className="order_view_info_card_title_container">
-                  <div>Order #302011</div>
-                  <div className="order_view_info_card_status">Processing</div>
+                  <div>Order #{data.order_id}</div>
+                  <div className="order_view_info_card_status">
+                    {data.order_status === 5
+                      ? "Placed"
+                      : data.order_status === 6
+                      ? "Processed"
+                      : data.order_status === 7
+                      ? "Shipped"
+                      : data.order_status === 8
+                      ? "Delivered"
+                      : data.order_status === 9
+                      ? "Returned"
+                      : data.order_status === 10
+                      ? "Catered"
+                      : ""}
+                  </div>
                 </div>
 
                 <div className="order_view_content_row_container">
@@ -230,7 +265,9 @@ export default function EditOrderDetails() {
                     <div>Added</div>
                   </div>
 
-                  <div>12 Dec 2022</div>
+                  <div>
+                    {moment(data.created_on.split(".")[0]).format("D MMM YY")}
+                  </div>
                 </div>
                 <div className="order_view_content_row_container">
                   <div className="order_view_content_row_title_container">
@@ -242,7 +279,7 @@ export default function EditOrderDetails() {
                     <div>Payment Method</div>
                   </div>
 
-                  <div>Visa</div>
+                  <div>Cash On Delivery</div>
                 </div>
                 <div className="order_view_content_row_container">
                   <div className="order_view_content_row_title_container">
@@ -254,7 +291,7 @@ export default function EditOrderDetails() {
                     <div>Shipping ID</div>
                   </div>
 
-                  <div>1</div>
+                  <div>{data.order_id}</div>
                 </div>
               </div>
               <div className="order_view_info_card">
@@ -273,7 +310,7 @@ export default function EditOrderDetails() {
                     <div>Customer</div>
                   </div>
 
-                  <div>John Adam</div>
+                  <div>{data.first_name + " " + data.last_name}</div>
                 </div>
                 <div className="order_view_content_row_container">
                   <div className="order_view_content_row_title_container">
@@ -285,7 +322,7 @@ export default function EditOrderDetails() {
                     <div>Email</div>
                   </div>
 
-                  <div>josh_adam@mail.com</div>
+                  <div>{data.email}</div>
                 </div>
                 <div className="order_view_content_row_container">
                   <div className="order_view_content_row_title_container">
@@ -297,7 +334,7 @@ export default function EditOrderDetails() {
                     <div>Phone</div>
                   </div>
 
-                  <div>909 427 2910</div>
+                  <div>{data.user_phone}</div>
                 </div>
               </div>
 
@@ -317,7 +354,7 @@ export default function EditOrderDetails() {
                     <div className="order_view_address_container">
                       <div className="order_view_address_title">Billing</div>
                       <div className="order_view_address_content">
-                        1833 Bel Meadow Drive, Fontana, California 92335, USA
+                        {data.user_address + ", " + data.user_city}
                       </div>
                     </div>
                   </div>
@@ -330,7 +367,7 @@ export default function EditOrderDetails() {
                     <div className="order_view_address_container">
                       <div className="order_view_address_title">Shipping</div>
                       <div className="order_view_address_content">
-                        1833 Bel Meadow Drive, Fontana, California 92335, USA
+                        {data.user_address + ", " + data.user_city}
                       </div>
                     </div>
                   </div>
@@ -342,7 +379,9 @@ export default function EditOrderDetails() {
               <div className="order_view_table_container">
                 <div className="order_view_title_container">
                   <div className="order_view_title">Products List</div>
-                  <div className="order_view_product_count">3 Products</div>
+                  <div className="order_view_product_count">
+                    {products_count} Products
+                  </div>
                 </div>
 
                 <div className="order_view_container">
@@ -365,22 +404,9 @@ export default function EditOrderDetails() {
                     </thead>
 
                     <tbody>
-                      {/* {ProductsList
-                  ? ProductsList.map((item, index) => (
-                      <ProductTableRow
-                        data={item}
-                        setProductsList={setProductsList}
-                        index={index}
-                      />
-                    ))
-                  : ""} */}
-                      {data
-                        ? data.map((item, index) => (
-                            <OrderViewTableRow
-                              data={item}
-                              setProductList={setProductList}
-                              index={index}
-                            />
+                      {data.products
+                        ? data.products.map((item, index) => (
+                            <OrderViewTableRow data={item} index={index} />
                           ))
                         : ""}
                     </tbody>
@@ -389,16 +415,16 @@ export default function EditOrderDetails() {
                 <div className="order_view_bill_summary_container">
                   <div className="order_view_total_price_container">
                     <div className="order_view_price_title">Sub Total</div>
-                    <div className="order_view_price">$300.00</div>
+                    <div className="order_view_price">${data.total_price}</div>
                   </div>
                   <div className="order_view_total_price_container">
                     <div className="order_view_price_title">Shipping Rate</div>
-                    <div className="order_view_price">$5.00</div>
+                    <div className="order_view_price">${ShippingRate}</div>
                   </div>
                   <div className="order_view_total_price_container">
                     <div className="order_view_price_title">Grand Total</div>
                     <div className="order_view_price">
-                      <b>$305.00</b>
+                      <b>${data.total_price + ShippingRate}</b>
                     </div>
                   </div>
                 </div>
@@ -408,87 +434,117 @@ export default function EditOrderDetails() {
                 <div className="order_view_timeline_title">Order Status</div>
 
                 <div className="order_view_timeline_status_infocards_container">
-                  <div className="order_view_timeline_infocard">
-                    <img
-                      src={ViewOrderPlacedIcon}
-                      alt=""
-                      className="order_view_timeline_status_img"
-                    />
+                  {data.date_placed ? (
+                    <div className="order_view_timeline_infocard">
+                      <img
+                        src={ViewOrderPlacedIcon}
+                        alt=""
+                        className="order_view_timeline_status_img"
+                      />
 
-                    <div className="order_view_timeline_infocard_content_container">
-                      <div className="order_view_timeline_infocard_title">
-                        Order Placed
-                      </div>
-                      <div className="order_view_timeline_infocard_content">
-                        An order has been placed.
-                      </div>
+                      <div className="order_view_timeline_infocard_content_container">
+                        <div className="order_view_timeline_infocard_title">
+                          Order Placed
+                        </div>
+                        <div className="order_view_timeline_infocard_content">
+                          An order has been placed.
+                        </div>
 
-                      <div className="order_view_timeline_infocard_date">
-                        12-03-23, 01:00
+                        <div className="order_view_timeline_infocard_date">
+                          {moment(data.date_placed.split(".")[0]).format(
+                            "D MMM YY"
+                          )}
+                          , {moment(data.date_placed).format("HH:mm")}
+                          {/* {data.date_placed} */}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    ""
+                  )}
+                  {data.date_processed ? (
+                    <div className="order_view_timeline_infocard">
+                      <img
+                        src={ViewOrderProcessedIcon}
+                        alt=""
+                        className="order_view_timeline_status_img"
+                      />
 
-                  <div className="order_view_timeline_infocard">
-                    <img
-                      src={ViewOrderProcessedIcon}
-                      alt=""
-                      className="order_view_timeline_status_img"
-                    />
+                      <div className="order_view_timeline_infocard_content_container">
+                        <div className="order_view_timeline_infocard_title">
+                          Processing
+                        </div>
+                        <div className="order_view_timeline_infocard_content">
+                          Seller has proccessed your order.
+                        </div>
 
-                    <div className="order_view_timeline_infocard_content_container">
-                      <div className="order_view_timeline_infocard_title">
-                        Processing
-                      </div>
-                      <div className="order_view_timeline_infocard_content">
-                        Seller has proccessed your order.
-                      </div>
-
-                      <div className="order_view_timeline_infocard_date">
-                        12-03-23, 01:00
+                        <div className="order_view_timeline_infocard_date">
+                          {moment(data.date_processed.split(".")[0]).format(
+                            "D MMM YY"
+                          )}
+                          , {moment(data.date_processed).format("HH:mm")}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="order_view_timeline_infocard">
-                    <img
-                      src={ViewOrderShippedIcon}
-                      alt=""
-                      className="order_view_timeline_status_img"
-                    />
+                  ) : (
+                    ""
+                  )}
 
-                    <div className="order_view_timeline_infocard_content_container">
-                      <div className="order_view_timeline_infocard_title">
-                        Shipping
-                      </div>
-                      <div className="order_view_timeline_infocard_content">
-                        The order has been shipped.
-                      </div>
+                  {data.date_shipped ? (
+                    <div className="order_view_timeline_infocard">
+                      <img
+                        src={ViewOrderShippedIcon}
+                        alt=""
+                        className="order_view_timeline_status_img"
+                      />
 
-                      <div className="order_view_timeline_infocard_date">
-                        12-03-23, 01:00
+                      <div className="order_view_timeline_infocard_content_container">
+                        <div className="order_view_timeline_infocard_title">
+                          Shipping
+                        </div>
+                        <div className="order_view_timeline_infocard_content">
+                          The order has been shipped.
+                        </div>
+
+                        <div className="order_view_timeline_infocard_date">
+                          {moment(data.date_shipped.split(".")[0]).format(
+                            "D MMM YY"
+                          )}
+                          , {moment(data.date_shipped).format("HH:mm")}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="order_view_timeline_infocard">
-                    <img
-                      src={ViewOrderDeliveredIcon}
-                      alt=""
-                      className="order_view_timeline_status_img"
-                    />
+                  ) : (
+                    ""
+                  )}
 
-                    <div className="order_view_timeline_infocard_content_container">
-                      <div className="order_view_timeline_infocard_title">
-                        Delivered
-                      </div>
-                      <div className="order_view_timeline_infocard_content">
-                        The order has been delivered.
-                      </div>
+                  {data.date_delivered ? (
+                    <div className="order_view_timeline_infocard">
+                      <img
+                        src={ViewOrderDeliveredIcon}
+                        alt=""
+                        className="order_view_timeline_status_img"
+                      />
 
-                      <div className="order_view_timeline_infocard_date">
-                        12-03-23, 01:00
+                      <div className="order_view_timeline_infocard_content_container">
+                        <div className="order_view_timeline_infocard_title">
+                          Delivered
+                        </div>
+                        <div className="order_view_timeline_infocard_content">
+                          The order has been delivered.
+                        </div>
+
+                        <div className="order_view_timeline_infocard_date">
+                          {moment(data.date_delivered.split(".")[0]).format(
+                            "D MMM YY"
+                          )}
+                          , {moment(data.date_delivered).format("HH:mm")}
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
               </div>
             </div>

@@ -229,5 +229,29 @@ export const updateproductstock = (data) => {
 };
 
 
+// Orders APIs
+
+export const getallorders = () => {
+  return axios.get("http://localhost:4000/api/order/getall");
+};
+
+export const getordersbyname = (UserName) => {
+  
+  const url = `http://localhost:4000/api/order/getbyname?name=${UserName}`;
+
+  return axios.get(url);
+};
+
+export const getordersbyid = (UserID) => {
+  
+  const url = `http://localhost:4000/api/order/getbyid?id=${UserID}`;
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const updateorderstatus = (data) => {
+  return axios.post("http://localhost:4000/api/order/update", data);
+};
 
 
