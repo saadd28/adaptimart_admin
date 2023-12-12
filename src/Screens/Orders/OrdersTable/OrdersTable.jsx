@@ -142,7 +142,7 @@ export default function OrdersTable() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getAllOrders(setOrdersList);
+    getAllOrders(setOrdersList, OrdersList);
   }, []);
   return (
     <>
@@ -274,11 +274,11 @@ export default function OrdersTable() {
   );
 }
 
-export const getAllOrders = (setOrdersList) => {
+export const getAllOrders = (setOrdersList, OrdersList) => {
   getallorders()
     .then((res) => {
       console.log("Updated orders list retrieved", res.data);
-      setOrdersList(res.data);
+      setOrdersList(OrdersList = res.data);
     })
     .catch((err) => {
       console.log("Error fetching orders:", err);

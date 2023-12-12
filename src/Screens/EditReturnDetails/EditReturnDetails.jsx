@@ -24,33 +24,63 @@ import {
 } from "../../Assets";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import moment from "moment";
-import { getordersbyid, updateorderstatus } from "../../api/apis";
+import {
+  getordersbyid,
+  markasdamaged,
+  markasnondamaged,
+  updateorderstatus,
+} from "../../api/apis";
 
-const ReturnsViewTableRow = ({ data, setProductList, index }) => {
-  //   const deleteProduct = (data) => {
-  //     console.log("delete product called");
+const ReturnsViewTableRow = ({ data, setProductList }) => {
+  const NonDamagedProduct = (data) => {
+    console.log("non damage product called");
 
-  //     let delObj = {
-  //       id: data ? data.id : 0,
-  //     };
-  //     deleteproduct(delObj)
-  //       .then((res) => {
-  //         console.log("resp", res);
+    let formData = {
+      product_id: data.product_id,
+      quantity: data.quantity,
+    };
+    console.log("formData", formData);
+    markasnondamaged(formData)
+      .then((res) => {
+        console.log("resp", res);
 
-  //         if (res.status === 200) {
-  //           if (res.data.affectedRows === 1) {
-  //             console.log("resp", res);
-  //             alert("Product Deleted Successfully");
-  //             getAllProducts(setProductsList);
-  //           }
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log("err", err);
-  //         alert("Please check your connection");
-  //       });
-  //   };
+        if (res.status === 200) {
+          console.log("resp", res);
+          alert("Product Marked as Non Damaged Successfully");
+          // getAllProducts(setProductsList);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Please check your connection");
+      });
+  };
 
+  const DamagedProduct = (data) => {
+    console.log("damage product called");
+
+    let formData = {
+      product_id: data.product_id,
+      quantity: data.quantity,
+    };
+    console.log("formData", formData);
+    markasdamaged(formData)
+      .then((res) => {
+        console.log("resp", res);
+
+        if (res.status === 200) {
+          console.log("resp", res);
+          alert("Product Marked as Damaged Successfully");
+          // getAllProducts(setProductsList);
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Please check your connection");
+      });
+  };
+
+  let [marked, setmarked] = useState(0);
   return (
     <>
       <tr className="product_table_row">
@@ -82,24 +112,47 @@ const ReturnsViewTableRow = ({ data, setProductList, index }) => {
           ${data.quantity * data.product_price}
         </td>
         <td className="product_table_data">
-          <div className="product_table_data_actions_container">
-            <img
-              src={NonDamagedIcon}
-              alt=""
-              className="product_table_data_edit_action_img svg_color"
-              onClick={(event) => {
-                // editProduct(data);
+          {marked === 0 ? (
+            <div className="product_table_data_actions_container">
+              <img
+                src={NonDamagedIcon}
+                alt=""
+                className="product_table_data_edit_action_img svg_color"
+                onClick={(event) => {
+                  NonDamagedProduct(data);
+                  setmarked((marked = 2));
+                }}
+              />
+              <img
+                src={DamagedIcon}
+                alt=""
+                className="product_table_data_edit_action_img svg_color"
+                onClick={(event) => {
+                  // deleteProduct(data);
+                  DamagedProduct(data);
+                  setmarked((marked = 1));
+                }}
+              />
+            </div>
+          ) : marked == 1 ? (
+            <div
+              style={{
+                color: "Red",
               }}
-            />
-            <img
-              src={DamagedIcon}
-              alt=""
-              className="product_table_data_edit_action_img svg_color"
-              onClick={(event) => {
-                // deleteProduct(data);
+            >
+              Damaged
+            </div>
+          ) : marked == 2 ? (
+            <div
+              style={{
+                color: "Green",
               }}
-            />
-          </div>
+            >
+              Not Damaged
+            </div>
+          ) : (
+            ""
+          )}
         </td>
       </tr>
     </>
@@ -136,6 +189,10 @@ export default function EditReturnDetails() {
         alert("Failed to Update Order Status");
       });
   };
+
+  useEffect(() => {
+    getAllProductsOfOrder(setProductList, ProductList);
+  }, []);
 
   return (
     <>
@@ -415,8 +472,11 @@ export default function EditReturnDetails() {
 
                     <tbody>
                       {data.products
-                        ? data.products.map((item, index) => (
-                            <ReturnsViewTableRow data={item} index={index} />
+                        ? data.products.map((item) => (
+                            <ReturnsViewTableRow
+                              data={item}
+                              setProductList={setProductList}
+                            />
                           ))
                         : ""}
                     </tbody>
@@ -564,3 +624,14 @@ export default function EditReturnDetails() {
     </>
   );
 }
+
+export const getAllProductsOfOrder = (setProductList, ProductList) => {
+  getordersbyid()
+    .then((res) => {
+      console.log("Updated orders list retrieved", res.data);
+      setProductList((ProductList = res.data));
+    })
+    .catch((err) => {
+      console.log("Error fetching orders:", err);
+    });
+};

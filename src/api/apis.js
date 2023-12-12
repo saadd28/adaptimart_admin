@@ -273,3 +273,12 @@ export const getreturnsbyid = (OrderID) => {
   // Make a GET request with the constructed URL
   return axios.get(url);
 };
+
+export const markasnondamaged = (data) => {
+  return axios.post("http://localhost:4000/api/return/markasunDamaged", data);
+};
+
+
+export const markasdamaged = (data) => {
+  return axios.post("http://localhost:4000/api/return/markasDamaged", data);
+};
