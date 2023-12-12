@@ -93,7 +93,7 @@ export default function Navbar() {
                 </div>
               </NavLink> */}
 
-              {/* <div
+              <div
                 className="dashboard_navbar_link"
                 onClick={() => {
                   setActiveLink((ActiveLink = 1));
@@ -116,7 +116,7 @@ export default function Navbar() {
                 >
                   Dashboard
                 </NavLink>
-              </div> */}
+              </div>
 
               {/* <div
                 className="dashboard_navbar_link"

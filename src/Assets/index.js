@@ -38,3 +38,7 @@ export { default as UnBlockUserIcon } from "./unblock_user_icon.svg";
 export { default as UserProfilePic } from "./user_profile_pic.jpeg";
 export { default as UserDetailsBG } from "./user_details_bg.svg";
 export { default as ViewUserOrderCountIcon } from "./view_customer_order_count_icon.svg";
+
+export { default as DashboardRevenueIcon } from "./dashboard_revenue_icon.svg";
+export { default as DashboardSalesIcon } from "./dashboard_sales_icon.svg";
+export { default as DashboardProductSKUIcon } from "./dashboard_products_sku_icon.svg";

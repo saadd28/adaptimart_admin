@@ -6,3 +6,52 @@
 
     /* border: 2px solid red; */
 }
+
+.dashboard_statistics_row{
+    display: flex;
+    justify-content: space-between;
+
+
+}
+
+.dashboard_statistics_infocard{
+    width: 32%;
+    background-color: white;
+    border-radius: 8px;
+    padding: 2em;
+    display: flex;
+    flex-direction: column;
+
+
+}
+
+.dashboard_statistics_infocard_img{
+    width: 50px;
+
+}
+
+.dashboard_statistics_infocard_title{
+    color: var(--neutral-black-black-500, #667085);
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+    padding: 1em 0 0.2em 0;
+
+}
+
+.dashboard_statistics_infocard__content{
+    color: var(--neutral-black-black-700, #333843);
+
+    /* Display M/Medium */
+    font-family: var(--Roboto);
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 32px; /* 133.333% */
+    letter-spacing: 0.12px;
+}

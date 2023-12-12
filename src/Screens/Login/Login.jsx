@@ -47,7 +47,7 @@ export default function Login() {
             <button
               className="login_btn"
               onClick={() => {
-                navigate("/manage_products");
+                navigate("/admin_dashboard");
               }}
             >
               Login
