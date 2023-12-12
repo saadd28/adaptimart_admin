@@ -89,8 +89,9 @@ export default function EditOrderDetails() {
   const navigate = useNavigate();
   const location = useLocation();
   let data = location.state ? location.state.datatosend : null;
-  let order_id = data.order_id
-  let order_status = data.order_status
+  let order_id = data.order_id;
+  let order_status = data.order_status;
+  let product_list = data.products;
 
   const products_count = Object.keys(data.products).length;
 
@@ -102,8 +103,9 @@ export default function EditOrderDetails() {
     let formData = {
       order_id: order_id,
       status: order_status,
+      product_list: product_list
     };
-    console.log("form data", formData)
+    console.log("form data", formData);
     updateorderstatus(formData)
       .then((res) => {
         console.log("resp", res);
@@ -207,7 +209,7 @@ export default function EditOrderDetails() {
                     ""
                   )}
 
-                  <button
+                  {/* <button
                     className="prod_head_add_product_btn"
                     onClick={() => {
                       //   saveproduct();
@@ -216,7 +218,7 @@ export default function EditOrderDetails() {
                     }}
                   >
                     Save Order
-                  </button>
+                  </button> */}
                 </div>
               </div>
             </div>
@@ -224,16 +226,6 @@ export default function EditOrderDetails() {
 
           {/* End Product Header */}
           <Fade right>
-            {/* <div className="edit_order_zero_row_container">
-              <div className="edit_row_edit_status_container">
-                <div className="edit_row_edit_status_title order_view_info_card_title_container">
-                  Order Status
-                </div>
-
-                <input type="text" name="order_status" id="order_status" className="product_details_form_input"/>
-              </div>
-            </div> */}
-
             <div className="order_view_first_row_container">
               <div className="order_view_info_card">
                 <div className="order_view_info_card_title_container">

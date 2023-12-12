@@ -78,8 +78,8 @@ const UserTableRow = ({ data, setUsersList, index }) => {
           <div className="product_table_data_name_container">
             <img
               src={
-                data.image
-                  ? "http://localhost:4000/" + data.image
+                data.profile_pic
+                  ? "http://localhost:4000/" + data.profile_pic
                   : AdaptiMartLogoCart
               }
               alt=""

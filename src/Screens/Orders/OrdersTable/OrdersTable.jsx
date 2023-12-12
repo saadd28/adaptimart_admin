@@ -108,14 +108,6 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
             <img
-              src={AdminProductEditIcon}
-              alt=""
-              className="product_table_data_edit_action_img"
-              onClick={(event) => {
-                editOrder(data);
-              }}
-            />
-            <img
               src={AdminProductViewIcon}
               alt=""
               className="product_table_data_edit_action_img"
@@ -123,6 +115,19 @@ const OrderTableRow = ({ data, setOrdersList, index }) => {
                 viewOrder(data);
               }}
             />
+
+            {data.order_status === 9 ? (
+              ""
+            ) : (
+              <img
+                src={AdminProductEditIcon}
+                alt=""
+                className="product_table_data_edit_action_img"
+                onClick={(event) => {
+                  editOrder(data);
+                }}
+              />
+            )}
           </div>
         </td>
       </tr>

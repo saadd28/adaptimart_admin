@@ -93,23 +93,14 @@ export default function Navbar() {
                 </div>
               </NavLink> */}
 
-              <div
+              {/* <div
                 className="dashboard_navbar_link"
                 onClick={() => {
                   setActiveLink((ActiveLink = 1));
                 }}
               >
-                {/* <div className="dashboard_navbar_link_logo">
-                  <DashboardIconSVG />
-                </div> */}
-
                 <img
-                  src={
-                    // ActiveLink === 1
-                    //   ? NavbarDashboardUnSelected
-                    //   : 
-                      NavbarDashboardLogo
-                  }
+                  src={NavbarDashboardLogo}
                   alt=""
                   className="dashboard_navbar_link_logo"
                 />
@@ -125,7 +116,7 @@ export default function Navbar() {
                 >
                   Dashboard
                 </NavLink>
-              </div>
+              </div> */}
 
               {/* <div
                 className="dashboard_navbar_link"

@@ -10,6 +10,12 @@ import {
   AdminSearchIcon,
 } from "../../../Assets";
 import { Fade } from "react-reveal";
+import {
+  getallreturns,
+  getreturnsbyid,
+  getreturnsbyname,
+} from "../../../api/apis";
+import moment from "moment";
 
 const ReturnsTableRow = ({ data, setReturnsList, index }) => {
   const navigate = useNavigate();
@@ -22,13 +28,13 @@ const ReturnsTableRow = ({ data, setReturnsList, index }) => {
     });
   };
 
-//   const viewOrder = (data) => {
-//     navigate("/view_order_details", {
-//       state: {
-//         datatosend: data,
-//       },
-//     });
-//   };
+  //   const viewOrder = (data) => {
+  //     navigate("/view_order_details", {
+  //       state: {
+  //         datatosend: data,
+  //       },
+  //     });
+  //   };
 
   //   const deleteProduct = (data) => {
   //     console.log("delete product called");
@@ -60,7 +66,7 @@ const ReturnsTableRow = ({ data, setReturnsList, index }) => {
         <td className="product_table_data">{index + 1}</td>
         <td className="product_table_data">
           <div className="product_table_data_name_container">
-            <div>{data.name}</div>
+            <div>{data.first_name + " " + data.last_name}</div>
           </div>
         </td>
         <td
@@ -69,14 +75,34 @@ const ReturnsTableRow = ({ data, setReturnsList, index }) => {
             color: "#52C1C5",
           }}
         >
-          {data.id}
+          {data.order_id}
         </td>
-        <td className="product_table_data">{data.status}</td>
-        <td className="product_table_data">${data.total_price}</td>
-        <td className="product_table_data">{data.payment_status}</td>
         <td className="product_table_data">
-          {/* {moment(data.created_on.split(".")[0]).format("D MMM YY")} */}
-          {data.created_on}
+          {data.order_status === 5
+            ? "Placed"
+            : data.order_status === 6
+            ? "Processed"
+            : data.order_status === 7
+            ? "Shipped"
+            : data.order_status === 8
+            ? "Delivered"
+            : data.order_status === 9
+            ? "Returned"
+            : data.order_status === 10
+            ? "Catered"
+            : ""}
+        </td>
+        <td className="product_table_data">${data.total_price}</td>
+        <td
+          className="product_table_data"
+          style={{
+            color: "Green",
+          }}
+        >
+          Paid
+        </td>
+        <td className="product_table_data">
+          {moment(data.created_on.split(".")[0]).format("D MMM YY")}
         </td>
         <td className="product_table_data">
           <div className="product_table_data_actions_container">
@@ -109,44 +135,9 @@ export default function ReturnsTable() {
   let [SearchName, setSearchName] = useState("");
   const navigate = useNavigate();
 
-  let data = [
-    {
-      id: 1,
-      name: "XYZ",
-      status: "Returned",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 2,
-      name: "XYZ",
-      status: "Returned",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 3,
-      name: "XYZ",
-      status: "Returned",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-    {
-      id: 4,
-      name: "XYZ",
-      status: "Returned",
-      total_price: 1234,
-      payment_status: "Paid",
-      created_on: "20-10-2023",
-    },
-  ];
-
-  // useEffect(() => {
-  //   getAllProducts(setReturnsList);
-  // }, []);
+  useEffect(() => {
+    getAllReturns(setReturnsList);
+  }, []);
 
   return (
     <>
@@ -208,9 +199,9 @@ export default function ReturnsTable() {
                 onChange={(event) => {
                   setSearchName((SearchName = event.target.value));
 
-                  // SearchType === 1
-                  //   ? getProductsByName(setReturnsList, SearchName)
-                  //   : getProductsById(setReturnsList, SearchName);
+                  SearchType === 1
+                    ? getReturnsyName(setReturnsList, SearchName)
+                    : getReturnsById(setReturnsList, SearchName);
                 }}
               />
             </div>
@@ -270,17 +261,8 @@ export default function ReturnsTable() {
             </thead>
 
             <tbody>
-              {/* {ReturnsList
-                  ? ReturnsList.map((item, index) => (
-                      <ProductTableRow
-                        data={item}
-                        setReturnsList={setReturnsList}
-                        index={index}
-                      />
-                    ))
-                  : ""} */}
-              {data
-                ? data.map((item, index) => (
+              {ReturnsList
+                ? ReturnsList.map((item, index) => (
                     <ReturnsTableRow
                       data={item}
                       setReturnsList={setReturnsList}
@@ -295,3 +277,45 @@ export default function ReturnsTable() {
     </>
   );
 }
+
+export const getAllReturns = (setReturnsList) => {
+  getallreturns()
+    .then((res) => {
+      console.log("Updated returns list retrieved", res.data);
+      setReturnsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching returns:", err);
+    });
+};
+
+export const getReturnsyName = (setReturnsList, SearchName) => {
+  let reqObj = {
+    name: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getreturnsbyname(SearchName)
+    .then((res) => {
+      console.log("Searched Returns list retrieved");
+      setReturnsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Returns:", err);
+    });
+};
+
+export const getReturnsById = (setReturnsList, SearchName) => {
+  let reqObj = {
+    id: SearchName,
+  };
+  console.log("reqObj", reqObj);
+  getreturnsbyid(SearchName)
+    .then((res) => {
+      console.log("Searched Returns list retrieved");
+      console.log("res", res);
+      setReturnsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching Returns:", err);
+    });
+};

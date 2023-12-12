@@ -254,4 +254,22 @@ export const updateorderstatus = (data) => {
   return axios.post("http://localhost:4000/api/order/update", data);
 };
 
+// Returns APIs
+export const getallreturns = () => {
+  return axios.get("http://localhost:4000/api/return/getall");
+};
 
+export const getreturnsbyname = (UserName) => {
+  
+  const url = `http://localhost:4000/api/return/getbyname?name=${UserName}`;
+
+  return axios.get(url);
+};
+
+export const getreturnsbyid = (OrderID) => {
+  
+  const url = `http://localhost:4000/api/return/getbyid?id=${OrderID}`;
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
