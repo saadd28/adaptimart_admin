@@ -326,3 +326,11 @@ export const gettopproducts = () => {
   return axios.get(url);
 };
 
+export const getperdictions = (sku_id) => {
+  
+  const url = "http://127.0.0.1:5001/train_predict";
+  
+  // Make a GET request with the constructed URL
+  return axios.post(url, sku_id);
+};
+

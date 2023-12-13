@@ -23,6 +23,7 @@ import {
   ReferenceArea,
 } from "recharts";
 import {
+  getperdictions,
   gettopproducts,
   gettotalproductskus,
   gettotalrevenue,
@@ -240,9 +241,11 @@ export default function AdminDashboard() {
   let [TotalSales, setTotalSales] = useState(0);
   let [TotalProductSKUs, setTotalProductSKUs] = useState(0);
   let [TotalUsers, setTotalUsers] = useState(0);
+  let [SKUID, setSKUID] = useState("");
   // let [Target, setTarget] = useState(15000);
-  let Target = 15000;
+  let Target = 40000;
   const [ProductsList, setProductsList] = useState(null);
+  const [PredictionsList, setPredictionsList] = useState(null);
 
   useEffect(() => {
     getTotalRevenue(setTotalRevenue, TotalRevenue);
@@ -250,7 +253,7 @@ export default function AdminDashboard() {
     getTotalProductSKUs(setTotalProductSKUs, TotalProductSKUs);
     getTotalUsers(setTotalUsers, TotalUsers);
     getTopProducts(setProductsList);
-    Target = 15000
+    Target = 40000;
   }, []);
 
   let predictionData = [
@@ -262,6 +265,28 @@ export default function AdminDashboard() {
     { date: "2023-12-18", price: 425 },
     { date: "2023-12-19", price: 410 },
   ];
+
+  const getPerdictions = (sku_id) => {
+    console.log("SKUID", sku_id);
+
+    getperdictions(sku_id, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("resp", res.data);
+          setPredictionsList((PredictionsList = res.data));
+          alert("Order Status Updated Successfully");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        alert("Failed to Update Order Status");
+      });
+  };
 
   return (
     <>
@@ -302,7 +327,7 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalRevenue ? TotalRevenue : 10000}
+                    finalValue={TotalRevenue ? TotalRevenue : 0}
                     duration={2000}
                   />
                 </div>
@@ -321,7 +346,7 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalSales ? TotalSales : 10000}
+                    finalValue={TotalSales ? TotalSales : 0}
                     duration={2000}
                   />
                 </div>
@@ -340,7 +365,7 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalProductSKUs ? TotalProductSKUs : 10000}
+                    finalValue={TotalProductSKUs ? TotalProductSKUs : 0}
                     duration={2000}
                   />
                 </div>
@@ -359,7 +384,7 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalUsers ? TotalUsers : 10000}
+                    finalValue={TotalUsers ? TotalUsers : 0}
                     duration={2000}
                   />
                 </div>
@@ -376,9 +401,21 @@ export default function AdminDashboard() {
                   type="text"
                   placeholder="Enter SKUID"
                   className="dashboard_graph_input"
+                  value={SKUID}
+                  onChange={(event) => {
+                    setSKUID((SKUID = event.target.value));
+                    console.log("SKUID", SKUID);
+                  }}
                 />
 
-                <button className="dashboard_graph_btn">Predict Prices</button>
+                <button
+                  className="dashboard_graph_btn"
+                  onClick={() => {
+                    getPerdictions(SKUID);
+                  }}
+                >
+                  Predict Prices
+                </button>
 
                 <div className="dashboard_guagechart_caption_container">
                   <div className="dashboard_guagechart_caption">
