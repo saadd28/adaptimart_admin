@@ -3,6 +3,7 @@ import "./AdminDashboard.css";
 import React, { useEffect, useState } from "react";
 import Navbar from "../../Compnents/Navbar/Navbar";
 import {
+  AdaptiMartLogoCart,
   AdminProfilePic,
   DashboardProductSKUIcon,
   DashboardRevenueIcon,
@@ -22,11 +23,14 @@ import {
   ReferenceArea,
 } from "recharts";
 import {
+  gettopproducts,
   gettotalproductskus,
   gettotalrevenue,
   gettotalsales,
   gettotalusers,
 } from "../../api/apis";
+import { PieChart } from "react-minimal-pie-chart";
+import { useSpring, animated } from "react-spring";
 
 const PricePredictionChart = ({ data }) => {
   const chartStyles = {
@@ -123,6 +127,78 @@ const IncrementalNumber = ({ initialValue, finalValue, duration }) => {
   return <div>{displayValue}</div>;
 };
 
+const GaugeChart = ({ total, revenue }) => {
+  const percentage = (revenue / total) * 100;
+
+  // Calculate the angle based on the percentage, ensuring it spans only a semicircle when revenue equals the total
+  const lengthAngle = 180;
+  const [props, set] = useSpring(() => ({
+    from: { percentage: 0 },
+    percentage,
+    // onRest: () => set({ percentage }), // Optional: Reset onRest to ensure it can be triggered again
+    delay: 10000, // Delay in milliseconds
+  }));
+  useEffect(() => {
+    set({ percentage });
+  }, [set, percentage]);
+
+  const data = [
+    { value: percentage, color: "#18ABB1" },
+    { value: 100 - percentage, color: "#a1cacb" },
+  ];
+
+  return (
+    <div style={{ position: "relative", width: "100%", height: "auto" }}>
+      <PieChart
+        style={{ width: "100%", height: "auto" }}
+        lineWidth={15}
+        data={data}
+        startAngle={180}
+        lengthAngle={lengthAngle}
+        totalValue={100}
+        animate
+      />
+      <animated.div className={"dashboard_guagechart_percentage"}>
+        {props.percentage.interpolate((val) => `${Math.round(val)}%`)}
+      </animated.div>
+    </div>
+  );
+};
+
+const ProductTableRow = ({ data, setProductsList, index }) => {
+  return (
+    <>
+      <tr className="product_table_row">
+        <td className="product_table_data">
+          <div className="product_table_data_name_container">
+            <img
+              src={
+                data.image
+                  ? "http://localhost:4000/" + data.image
+                  : AdaptiMartLogoCart
+              }
+              alt=""
+              className="product_table_data_img"
+            />
+            <div>{data.product_name}</div>
+          </div>
+        </td>
+        <td
+          className="product_table_data"
+          style={{
+            color: "#52C1C5",
+          }}
+        >
+          {data.product_id}
+        </td>
+        <td className="product_table_data">${data.price}</td>
+        <td className="product_table_data">{data.total_quantity_sold}</td>
+        <td className="product_table_data">${data.total_amount_sold}</td>
+      </tr>
+    </>
+  );
+};
+
 export default function AdminDashboard() {
   // const [predictionData, setPredictionData] = useState([]);
   // const handleButtonClick = () => {
@@ -164,12 +240,17 @@ export default function AdminDashboard() {
   let [TotalSales, setTotalSales] = useState(0);
   let [TotalProductSKUs, setTotalProductSKUs] = useState(0);
   let [TotalUsers, setTotalUsers] = useState(0);
+  // let [Target, setTarget] = useState(15000);
+  let Target = 15000;
+  const [ProductsList, setProductsList] = useState(null);
 
   useEffect(() => {
     getTotalRevenue(setTotalRevenue, TotalRevenue);
     getTotalSales(setTotalSales, TotalSales);
     getTotalProductSKUs(setTotalProductSKUs, TotalProductSKUs);
     getTotalUsers(setTotalUsers, TotalUsers);
+    getTopProducts(setProductsList);
+    Target = 15000
   }, []);
 
   let predictionData = [
@@ -181,6 +262,7 @@ export default function AdminDashboard() {
     { date: "2023-12-18", price: 425 },
     { date: "2023-12-19", price: 410 },
   ];
+
   return (
     <>
       <div className="dashboard_box">
@@ -297,12 +379,73 @@ export default function AdminDashboard() {
                 />
 
                 <button className="dashboard_graph_btn">Predict Prices</button>
+
+                <div className="dashboard_guagechart_caption_container">
+                  <div className="dashboard_guagechart_caption">
+                    <div className="dashboard_guagechart_caption_title">
+                      Target
+                    </div>
+                    <div className="dashboard_guagechart_caption_content">
+                      ${Target}
+                    </div>
+                  </div>
+                  <div className="dashboard_guagechart_caption">
+                    <div className="dashboard_guagechart_caption_title">
+                      Total Revenue
+                    </div>
+                    <div className="dashboard_guagechart_caption_content">
+                      ${TotalRevenue}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="dashboard_guagechart_container">
+                  <GaugeChart total={Target} revenue={TotalRevenue} />
+                </div>
               </div>
 
               <div className="dashboard_graph_container">
                 {predictionData.length > 0 && (
                   <PricePredictionChart data={predictionData} />
                 )}
+              </div>
+            </div>
+
+            <div className="dashboard_top_selling_product_container">
+              <div className="dashboard_top_selling_product_title">
+                Top Selling Products
+              </div>
+              <div className="product_table_container">
+                <table
+                  className="product_table"
+                  style={{
+                    // borderSpacing: "0 10px",
+                    borderCollapse: "separate",
+                  }}
+                >
+                  <thead>
+                    <tr className="table_heading_row">
+                      {/* <th className="table_heading">No.</th> */}
+                      <th className="table_heading">Product Name</th>
+                      <th className="table_heading">SKU_ID</th>
+                      <th className="table_heading">Price</th>
+                      <th className="table_heading">Total Quantity Sold</th>
+                      <th className="table_heading">Total Amount Sold</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {ProductsList
+                      ? ProductsList.map((item, index) => (
+                          <ProductTableRow
+                            data={item}
+                            setProductsList={setProductsList}
+                            index={index}
+                          />
+                        ))
+                      : ""}
+                  </tbody>
+                </table>
               </div>
             </div>
           </Fade>
@@ -351,13 +494,21 @@ export const getTotalProductSKUs = (setTotalProductSKUs, TotalProductSKUs) => {
 export const getTotalUsers = (setTotalUsers, TotalUsers) => {
   gettotalusers()
     .then((res) => {
-      console.log(
-        "Updated Total Users retrieved",
-        res.data[0].total_users
-      );
+      console.log("Updated Total Users retrieved", res.data[0].total_users);
       setTotalUsers((TotalUsers = res.data[0].total_users));
     })
     .catch((err) => {
       console.log("Error fetching Total Users:", err);
+    });
+};
+
+export const getTopProducts = (setProductsList) => {
+  gettopproducts()
+    .then((res) => {
+      console.log("Updated products list retrieved");
+      setProductsList(res.data);
+    })
+    .catch((err) => {
+      console.log("Error fetching products:", err);
     });
 };

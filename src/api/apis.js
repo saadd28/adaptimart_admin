@@ -6,6 +6,7 @@ export const addproduct = (data) => {
 
 export const getallproducts = () => {
   return axios.get("http://localhost:4000/api/product/getall");
+  // return axios.get("http://saad.finfac.pk/api/product/getall");
 };
 
 // export const editname = (data) =>{
@@ -312,6 +313,14 @@ export const gettotalproductskus = () => {
 export const gettotalusers = () => {
   
   const url = "http://localhost:4000/api/dashboard/gettotalusers";
+  
+  // Make a GET request with the constructed URL
+  return axios.get(url);
+};
+
+export const gettopproducts = () => {
+  
+  const url = "http://localhost:4000/api/dashboard/gettopsellingskus";
   
   // Make a GET request with the constructed URL
   return axios.get(url);
