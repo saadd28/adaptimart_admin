@@ -305,7 +305,7 @@ export const getperdictions = (sku_id) => {
 };
 
 export const getpriceoptimization = (data) => {
-  const url = "http://localhost:8000/fetch_data/";
+  const url = "http://localhost:8001/fetch_data/";
 
   // Make a GET request with the constructed URL
   return axios.post(url, data);
