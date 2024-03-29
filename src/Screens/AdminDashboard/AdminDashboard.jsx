@@ -19,60 +19,404 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  Area,
-  ReferenceArea,
+  // Area,
+  // ReferenceArea,
+  ReferenceLine,
 } from "recharts";
 import {
   getperdictions,
+  getpriceoptimization,
   gettopproducts,
   gettotalproductskus,
   gettotalrevenue,
   gettotalsales,
   gettotalusers,
+  updateprice,
 } from "../../api/apis";
 import { PieChart } from "react-minimal-pie-chart";
 import { useSpring, animated } from "react-spring";
+import moment from "moment";
+import { max } from "moment/moment";
+import { format } from "date-fns";
 
-const PricePredictionChart = ({ data }) => {
-  const chartStyles = {
-    backgroundColor: "white",
-    padding: "20px",
-    borderRadius: "8px",
+// const PricePredictionChart = ({ data }) => {
+//   const chartStyles = {
+//     backgroundColor: "white",
+//     padding: "20px",
+//     borderRadius: "8px",
+//   };
+
+//   const labelStyles = {
+//     fontSize: "16px",
+//     fontFamily: "Arial, sans-serif",
+//     color: "#333", // Text color
+//   };
+
+//   return (
+//     <>
+//       <div className="dashboard_graph_title">Price Prediction</div>
+//       <LineChart
+//         width={800}
+//         height={400}
+//         data={data}
+//         margin={{ top: 0, right: 40, left: 10, bottom: 10 }}
+//       >
+//         <CartesianGrid strokeOpacity={0} />
+//         <XAxis
+//           dataKey="date"
+//           label={{
+//             // value: "Dates",
+//             position: "bottom",
+//             dy: 10,
+//           }}
+//           tick={{
+//             fontSize: "1.4rem",
+//             fontFamily: "var(--Roboto)",
+//             fill: "#555",
+//             angle: 0,
+//           }}
+//         />
+//         <YAxis
+//           label={{
+//             //  value: "Prices",
+//             angle: -90,
+//             position: "insideLeft",
+//           }}
+//           tick={{
+//             fontSize: "1.4rem",
+//             fontFamily: "var(--Roboto)",
+//             fill: "#555",
+//           }}
+//         />
+//         <Tooltip />
+//         <Legend verticalAlign="top" align="right" height={36} />
+//         <Line
+//           type="monotone"
+//           dataKey="price"
+//           stroke="#FF5733"
+//           strokeWidth={2}
+//         />
+//         <ReferenceArea
+//           y1={0}
+//           y2={Math.max(...data.map((item) => item.price))}
+//           fill="url(#shadow)"
+//           fillOpacity={0.3}
+//         />
+//       </LineChart>
+//     </>
+//   );
+// };
+
+function formatDate(dateString) {
+  // Parse the date string into a Moment object
+  const date = moment(dateString);
+
+  // Format the date as desired (e.g., DD/MM/YYYY)
+  const formattedDate = date.format("DD/MM/YYYY");
+
+  return formattedDate;
+}
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  // ActualList,
+  PredictionsList,
+}) => {
+  if (active && payload && payload.length) {
+    const date = new Date(label);
+    // const actualDatum = ActualList.find(
+    //   (item) => item.date.getTime() === date.getTime()
+    // );
+    const predictionDatum = PredictionsList.find(
+      (item) => item.date.getTime() === date.getTime()
+    );
+
+    // if (actualDatum && !predictionDatum) {
+    //   return (
+    //     <div className="custom_tooltip">
+    //       <p>{`Date: ${formatDate(label)}`}</p>
+    //       <p>{`Actual Sales: ${actualDatum.sales}`}</p>
+    //     </div>
+    //   );
+    // } else
+    // if (!actualDatum && predictionDatum) {
+    if (predictionDatum) {
+      return (
+        <div className="custom_tooltip">
+          <p>{`Date: ${formatDate(label)}`}</p>
+          {predictionDatum.flag === 1 ? (
+            <p>{`Actual  Sales: ${predictionDatum.sales}`}</p>
+          ) : (
+            <p>{`Predicted Sales: ${predictionDatum.sales}`}</p>
+          )}
+        </div>
+      );
+    }
+    // else if (actualDatum && predictionDatum) {
+    //   return (
+    //     <div className="custom_tooltip">
+    //       <p>{`Date: ${formatDate(label)}`}</p>
+    //       <p>{`Actual Sales: ${actualDatum.sales}`}</p>
+    //       <p>{`Predicted Sales: ${predictionDatum.sales}`}</p>
+    //     </div>
+    //   );
+    // }
+  }
+
+  return null;
+};
+
+const PricePredictionChart = ({
+  // ActualList,
+  // setActualList,
+  PredictionsList,
+  setPredictionsList,
+  SKUID,
+  Prediction_Frequency,
+  // ChunkLength,
+  // setChunkLength,
+}) => {
+  // const combinedData = [...ActualList, ...PredictionsList];
+  // // Convert date strings to Date objects
+  // ActualList = ActualList.map((item) => ({
+  //   ...item,
+  //   date: new Date(item.date),
+  // }));
+  console.log("PredictionsList", PredictionsList);
+  PredictionsList = PredictionsList.map((item) => ({
+    ...item,
+    date: new Date(item.date),
+  }));
+
+  // Find the minimum and maximum dates for actual and prediction data
+  // const minDate = new Date(Math.min(...combinedData.map((item) => item.date)));
+  // const maxDate = new Date(Math.max(...combinedData.map((item) => item.date)));
+  const minDate = new Date(Math.min(PredictionsList.map((item) => item.date)));
+  const maxDate = new Date(Math.max(PredictionsList.map((item) => item.date)));
+
+  // yaxis setting
+  // Initialize min and max variables with the first element's sales value
+  let minSales = PredictionsList[0].sales;
+  let maxSales = PredictionsList[0].sales;
+  // let actual_length = 0;
+  let predicted_length = 0;
+
+  // Iterate through the array to find min and max sales values
+  for (let i = 1; i < PredictionsList.length; i++) {
+    const sales = PredictionsList[i].sales;
+    const flag = PredictionsList[i].flag;
+    if (flag === 1) {
+      predicted_length = predicted_length + 1;
+    }
+    if (sales < minSales) {
+      minSales = sales;
+    }
+    if (sales > maxSales) {
+      maxSales = sales;
+    }
+  }
+
+  const percentage =
+    100 -
+    ((PredictionsList.length - predicted_length - 1) /
+      (PredictionsList.length - 1)) *
+      100;
+  // for (let i = 1; i < ActualList.length; i++) {
+  //   const sales = ActualList[i].sales;
+  //   if (sales < minSales) {
+  //     minSales = sales;
+  //   }
+  //   if (sales > maxSales) {
+  //     maxSales = sales;
+  //   }
+  // }
+
+  // const [view, setView] = useState("daily");
+  let [PredictionFrequency, setPredictionFrequency] =
+    useState(Prediction_Frequency);
+  let [PredictionsButtonToggle, setPredictionsButtonToggle] = useState(0);
+
+  const getPerdictions = (sku_id_str, prediction_frequency) => {
+    console.log("SKUID", sku_id_str);
+    const requestData = {
+      sku_id_str: sku_id_str,
+      prediction_frequency: prediction_frequency,
+      // chunk: chunk_length,
+    };
+
+    getperdictions(requestData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          console.log("resp", res.data.data);
+          setPredictionsList((PredictionsList = res.data.data));
+          // setActualList((ActualList = res.data.last_30_data));
+          // alert("Predictions Successfully");
+        }
+      })
+      .catch((err) => {
+        console.log("err", err);
+        // alert("Failed to Predict Sales");
+      });
   };
 
-  const labelStyles = {
-    fontSize: "16px",
-    fontFamily: "Arial, sans-serif",
-    color: "#333", // Text color
-  };
+  useEffect(() => {
+    // Call getPredictions only when both PredictionsButtonToggle and PredictionFrequency are updated
+    if (PredictionsButtonToggle !== null && PredictionFrequency !== null) {
+      console.log(
+        "Toggle Button: ",
+        SKUID,
+        "  ",
+        PredictionFrequency
+        // "  ",
+        // ChunkLength
+      );
+      getPerdictions(SKUID, PredictionFrequency);
+    }
+  }, [PredictionsButtonToggle, PredictionFrequency]); // Ensure SKUID is in the dependency array if it's being used inside useEffect
+
+  // const [ChunkLength, setChunkLength] = useState(30);
+  let DailyChunkLengthList = [10, 20, 30, 40];
+  let WeeklyChunkLengthList = [2, 4, 8];
+  // const [ChunkLengthList, setChunkLengthList] = useState([""]);
+  // const [WeeklyFrequency, setWeeklyFrequency] = useState(4);
+  // let WeeklyFrequencyList = [];
+
+  // const handleChunkLengthChange = (event) => {
+  //   setChunkLength((ChunkLength = event.target.value));
+  //   // console.log("Daily Frequency", ChunkLength);
+  //   // getPerdictions(SKUID, PredictionFrequency, ChunkLength);
+  // };
+  // const handleWeeklyFrequencyChange = (event) => {
+  //   setWeeklyFrequency(event.target.value);
+  //   console.log("Weekly Frequency", WeeklyFrequency);
+  // };
 
   return (
     <>
-      <div className="dashboard_graph_title">Price Prediction</div>
+      <div className="predictions_btn_container">
+        <button
+          className={
+            PredictionsButtonToggle === 0
+              ? "predictions_toggle_active_btn"
+              : "predictions_toggle_nonactive_btn"
+          }
+          onClick={() => {
+            setPredictionsButtonToggle(0);
+            setPredictionFrequency((PredictionFrequency = "D"));
+            // handleChunkLengthChange();
+
+            // getPerdictions(SKUID, PredictionFrequency);
+          }}
+        >
+          Daily
+        </button>
+        <button
+          className={
+            PredictionsButtonToggle === 1
+              ? "predictions_toggle_active_btn"
+              : "predictions_toggle_nonactive_btn"
+          }
+          onClick={() => {
+            setPredictionsButtonToggle(1);
+            setPredictionFrequency((PredictionFrequency = "W"));
+            // handleChunkLengthChange();
+            // getPerdictions(SKUID, PredictionFrequency);
+          }}
+        >
+          Weekly
+        </button>
+      </div>
+      {/* <div className="predictions_dropdown_container">
+        <select
+          id="dropdown"
+          className=""
+          value={ChunkLength}
+          onChange={handleChunkLengthChange}
+        >
+          {PredictionsButtonToggle === 0
+            ? DailyChunkLengthList
+              ? DailyChunkLengthList.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))
+              : null
+            : WeeklyChunkLengthList
+            ? WeeklyChunkLengthList.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))
+            : null}
+        </select> */}
+      {/* {PredictionsButtonToggle === 0 ? (
+          <select
+            id="dropdown"
+            className=""
+            value={ChunkLength}
+            onChange={handleChunkLengthChange}
+          >
+            {DailyChunkLengthList
+              ? DailyChunkLengthList.map((item) => (
+                  <option value={item}>{item}</option>
+                ))
+              : ""}
+          </select>
+        ) : (
+          <select
+          id="dropdown"
+          className=""
+          value={ChunkLength}
+          onChange={handleChunkLengthChange}
+          >
+          {WeeklyChunkLengthList
+            ? WeeklyChunkLengthList.map((item) => (
+                <option value={item}>{item}</option>
+              ))
+            : ""}
+          </select>
+        )} */}
+      {/* <option value={ChunkLength}>{ChunkLength}</option> */}
+      {/* </div> */}
+      <div className="dashboard_graph_title">Sales Prediction</div>
       <LineChart
         width={800}
         height={400}
-        data={data}
-        margin={{ top: 0, right: 40, left: 10, bottom: 10 }}
+        margin={{ top: 0, right: 40, left: 10, bottom: 20 }}
+        data={PredictionsList}
       >
+        <defs>
+          <linearGradient id="gradient" x1="0" y1="0" x2="100%" y2="0">
+            <stop offset="0%" stopColor="red" />
+            <stop offset={`${percentage}%`} stopColor="red" />
+            <stop offset={`${percentage}%`} stopColor="blue" />
+            <stop offset="100%" stopColor="blue" />
+          </linearGradient>
+        </defs>
         <CartesianGrid strokeOpacity={0} />
         <XAxis
           dataKey="date"
+          type="date"
+          scale="date"
+          // domain={["dataMin", "dataMax"]}
+          // tickFormatter={(tick) => format(new Date(tick), "yyyy/MM/dd")}
           label={{
-            // value: "Dates",
+            value: "Date",
             position: "bottom",
-            dy: 10,
+            // dy: 10,
+            // angle: -90,
           }}
-          tick={{
-            fontSize: "1.4rem",
-            fontFamily: "var(--Roboto)",
-            fill: "#555",
-            angle: 0,
-          }}
+          display="none"
         />
         <YAxis
           label={{
-            //  value: "Prices",
             angle: -90,
             position: "insideLeft",
           }}
@@ -81,21 +425,35 @@ const PricePredictionChart = ({ data }) => {
             fontFamily: "var(--Roboto)",
             fill: "#555",
           }}
+          type="number" // Set type to "number" for Y-axis
+          // tickFormatter={(tick) => Math.round(tick)}
+          domain={[minSales, maxSales]} // Set the domain based on your data
+          tickCount={maxSales - minSales + 1} // Set the tick count to cover the range
+          tickFormatter={(tick) => Math.round(tick)} // Round tick values to integers
         />
-        <Tooltip />
+        <Tooltip
+          content={(props) => (
+            <CustomTooltip
+              // ActualList={ActualList}
+              PredictionsList={PredictionsList}
+              {...props}
+            />
+          )}
+        />
         <Legend verticalAlign="top" align="right" height={36} />
+
         <Line
           type="monotone"
-          dataKey="price"
-          stroke="#FF5733"
+          dataKey="sales"
+          data={PredictionsList}
+          // stroke={predictedColor}
+          stroke="url(#gradient)"
           strokeWidth={2}
+          // name={none}
+          dot={false}
         />
-        <ReferenceArea
-          y1={0}
-          y2={Math.max(...data.map((item) => item.price))}
-          fill="url(#shadow)"
-          fillOpacity={0.3}
-        />
+
+        {/* <ReferenceLine x={PredictionsList[predicted_length].date} label="iPhone" /> */}
       </LineChart>
     </>
   );
@@ -166,42 +524,65 @@ const GaugeChart = ({ total, revenue }) => {
   );
 };
 
-const ProductTableRow = ({ data, setProductsList, index }) => {
+const ProductTableRow = ({ data, updateOptimizedProducts }) => {
+  let [approved, setApproved] = useState(false);
+
+  const updatePrice = (id, price) => {
+    updateprice(id, price)
+      .then((res) => {
+        console.log("Optimized Price Updated!", res.data);
+        data.actual_price = data.optimal_price;
+        // setTotalRevenue((TotalRevenue = res.data[0].total_price));
+      })
+      .catch((err) => {
+        console.log("Error fetching Updating Optimized Price:", err);
+      });
+  };
+
   return (
     <>
       <tr className="product_table_row">
-        <td className="product_table_data">
-          <div className="product_table_data_name_container">
-            <img
-              src={
-                data.image
-                  ? "http://localhost:4000/" + data.image
-                  : AdaptiMartLogoCart
-              }
-              alt=""
-              className="product_table_data_img"
-            />
-            <div>{data.product_name}</div>
-          </div>
-        </td>
         <td
           className="product_table_data"
           style={{
             color: "#52C1C5",
           }}
         >
-          {data.product_id}
+          {data.sku_id}
         </td>
-        <td className="product_table_data">${data.price}</td>
-        <td className="product_table_data">{data.total_quantity_sold}</td>
-        <td className="product_table_data">${data.total_amount_sold}</td>
+        <td className="product_table_data">
+          ${parseFloat(data.actual_price).toFixed(2)}
+        </td>
+        <td className="product_table_data">
+          ${parseFloat(data.optimal_price).toFixed(2)}
+        </td>
+        <td className="product_table_data">
+          ${parseFloat(data.max_profit).toFixed(2)}
+        </td>
+        <td className="product_table_data">{data.sales}</td>
+        <td className="product_table_data">
+          {approved ? (
+            <div>New Price Approved!</div>
+          ) : (
+            <button
+              className="price_opt_btn"
+              onClick={(e) => {
+                e.preventDefault();
+                updateOptimizedProducts(data.sku_id, data.optimal_price);
+                setApproved(true);
+              }}
+            >
+              Approve
+            </button>
+          )}
+        </td>
       </tr>
     </>
   );
 };
 
 export default function AdminDashboard() {
-  // const [predictionData, setPredictionData] = useState([]);
+  // const [PredictionsList, setPredictionsList] = useState([]);
   // const handleButtonClick = () => {
   //   // try {
   //   //   // Make API call to your prediction endpoint
@@ -209,14 +590,14 @@ export default function AdminDashboard() {
   //   //   const data =  response.json();
 
   //   //   // Assuming your API response has a structure like { date: 'yyyy-mm-dd', predictedPrice: 123.45 }
-  //   //   setPredictionData(data);
+  //   //   setPredictionsList(data);
   //   // } catch (error) {
   //   //   console.error("Error fetching data:", error);
   //   return 0;
   //   }
   // };
 
-  // let predictionData = [
+  // let PredictionsList = [
   //   {
   //     price: 1,
   //   },
@@ -242,10 +623,52 @@ export default function AdminDashboard() {
   let [TotalProductSKUs, setTotalProductSKUs] = useState(0);
   let [TotalUsers, setTotalUsers] = useState(0);
   let [SKUID, setSKUID] = useState("");
+  let [PredictionsList, setPredictionsList] = useState([]);
+  let [ActualList, setActualList] = useState([]);
+  let [PredictionFrequency, setPredictionFrequency] = useState("D");
+  let [ChunkLength, setChunkLength] = useState(30);
+
   // let [Target, setTarget] = useState(15000);
   let Target = 40000;
   const [ProductsList, setProductsList] = useState(null);
-  const [PredictionsList, setPredictionsList] = useState(null);
+
+  const options = [
+    { label: "Today", value: "Day 1" },
+    { label: "Day 1", value: "Day 2" },
+    { label: "Day 2", value: "Day 3" },
+    { label: "Day 3", value: "Day 4" },
+    { label: "Day 4", value: "Day 5" },
+    { label: "Day 5", value: "Day 6" },
+    { label: "Day 6", value: "Day 7" },
+  ];
+  let [selectedOption, setSelectedOption] = useState(options[0].value);
+  let [optimizedProducts, setOptimizedProducts] = useState([]);
+
+  const handleSelect = (event) => {
+    setSelectedOption((selectedOption = event.target.value));
+    console.log("Selected option:", selectedOption);
+    getPriceOptimization(selectedOption);
+  };
+
+  const getPriceOptimization = () => {
+    let reqobj = {
+      day: selectedOption,
+    };
+    console.log("reqobj", reqobj);
+    getpriceoptimization(reqobj)
+      .then((res) => {
+        console.log("Optimized Price", res.data);
+        setOptimizedProducts((optimizedProducts = res.data));
+        // setTotalRevenue((TotalRevenue = res.data[0].total_price));
+      })
+      .catch((err) => {
+        console.log("Error fetching Optimized Price:", err);
+      });
+  };
+
+  const updateOptimizedProducts = (id, price) => {
+    optimizedProducts[id].actual_price = price;
+  };
 
   useEffect(() => {
     getTotalRevenue(setTotalRevenue, TotalRevenue);
@@ -253,23 +676,26 @@ export default function AdminDashboard() {
     getTotalProductSKUs(setTotalProductSKUs, TotalProductSKUs);
     getTotalUsers(setTotalUsers, TotalUsers);
     getTopProducts(setProductsList);
+    getPriceOptimization();
     Target = 40000;
   }, []);
 
-  let predictionData = [
-    { date: "2023-12-13", price: 400 },
-    { date: "2023-12-14", price: 300 },
-    { date: "2023-12-15", price: 350 },
-    { date: "2023-12-16", price: 450 },
-    { date: "2023-12-17", price: 400 },
-    { date: "2023-12-18", price: 425 },
-    { date: "2023-12-19", price: 410 },
-  ];
+  const getPerdictions = (sku_id_str, prediction_frequency) => {
+    console.log(
+      "Button Click: ",
+      SKUID,
+      "  ",
+      PredictionFrequency,
+      "  ",
+      ChunkLength
+    );
+    const requestData = {
+      sku_id_str: sku_id_str,
+      prediction_frequency: prediction_frequency,
+      // chunk: chunk_length,
+    };
 
-  const getPerdictions = (sku_id) => {
-    console.log("SKUID", sku_id);
-
-    getperdictions(sku_id, {
+    getperdictions(requestData, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -277,14 +703,15 @@ export default function AdminDashboard() {
     })
       .then((res) => {
         if (res.status === 200) {
-          console.log("resp", res.data);
-          setPredictionsList((PredictionsList = res.data));
-          alert("Order Status Updated Successfully");
+          console.log("resp", res.data.data);
+          setPredictionsList((PredictionsList = res.data.data));
+          // setActualList((ActualList = res.data.last_30_data));
+          // alert("Predictions Successfully");
         }
       })
       .catch((err) => {
         console.log("err", err);
-        alert("Failed to Update Order Status");
+        // alert("Failed to Predict Sales");
       });
   };
 
@@ -327,7 +754,8 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalRevenue ? TotalRevenue : 0}
+                    // finalValue={TotalRevenue ? TotalRevenue : 0}
+                    finalValue={30000}
                     duration={2000}
                   />
                 </div>
@@ -346,7 +774,7 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalSales ? TotalSales : 0}
+                    finalValue={80}
                     duration={2000}
                   />
                 </div>
@@ -365,7 +793,8 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalProductSKUs ? TotalProductSKUs : 0}
+                    // finalValue={TotalProductSKUs ? TotalProductSKUs : 0}
+                    finalValue={10}
                     duration={2000}
                   />
                 </div>
@@ -384,7 +813,8 @@ export default function AdminDashboard() {
                 <div className="dashboard_statistics_infocard__content">
                   <IncrementalNumber
                     initialValue={0}
-                    finalValue={TotalUsers ? TotalUsers : 0}
+                    // finalValue={TotalUsers ? TotalUsers : 0}
+                    finalValue={40}
                     duration={2000}
                   />
                 </div>
@@ -411,10 +841,10 @@ export default function AdminDashboard() {
                 <button
                   className="dashboard_graph_btn"
                   onClick={() => {
-                    getPerdictions(SKUID);
+                    getPerdictions(SKUID, PredictionFrequency);
                   }}
                 >
-                  Predict Prices
+                  Predict Sales
                 </button>
 
                 <div className="dashboard_guagechart_caption_container">
@@ -431,27 +861,57 @@ export default function AdminDashboard() {
                       Total Revenue
                     </div>
                     <div className="dashboard_guagechart_caption_content">
-                      ${TotalRevenue}
+                      {/* ${TotalRevenue} */}${30000}
                     </div>
                   </div>
                 </div>
 
                 <div className="dashboard_guagechart_container">
-                  <GaugeChart total={Target} revenue={TotalRevenue} />
+                  <GaugeChart total={Target} revenue={30000} />
+                  {/* <GaugeChart total={Target} revenue={TotalRevenue} /> */}
                 </div>
               </div>
 
               <div className="dashboard_graph_container">
-                {predictionData.length > 0 && (
-                  <PricePredictionChart data={predictionData} />
+                {/* {PredictionsList.length > 0 && (
+                  <PricePredictionChart data={PredictionsList} />
+                )} */}
+                {PredictionsList.length > 0 && (
+                  <PricePredictionChart
+                    // ActualList={ActualList}
+                    // setActualList={setActualList}
+                    PredictionsList={PredictionsList}
+                    setPredictionsList={setPredictionsList}
+                    SKUID={SKUID}
+                    PredictionFrequency={PredictionFrequency}
+                    // ChunkLength={ChunkLength}
+                    // setChunkLength={setChunkLength}
+                  />
                 )}
               </div>
             </div>
 
             <div className="dashboard_top_selling_product_container">
               <div className="dashboard_top_selling_product_title">
-                Top Selling Products
+                Price Optimization
               </div>
+
+              <div className="dropdown">
+                <select
+                  value={selectedOption}
+                  onChange={(e) => {
+                    handleSelect(e);
+                  }}
+                >
+                  {/* <option value="d">Select an option</option> */}
+                  {options.map((option, index) => (
+                    <option key={index} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="product_table_container">
                 <table
                   className="product_table"
@@ -463,21 +923,69 @@ export default function AdminDashboard() {
                   <thead>
                     <tr className="table_heading_row">
                       {/* <th className="table_heading">No.</th> */}
-                      <th className="table_heading">Product Name</th>
                       <th className="table_heading">SKU_ID</th>
-                      <th className="table_heading">Price</th>
-                      <th className="table_heading">Total Quantity Sold</th>
-                      <th className="table_heading">Total Amount Sold</th>
+                      <th className="table_heading">Actual Price</th>
+                      <th className="table_heading">
+                        {selectedOption === "Day 1"
+                          ? "Today's Optimal Price"
+                          : selectedOption === "Day 2"
+                          ? "Day 1 Optimal Price"
+                          : selectedOption === "Day 3"
+                          ? "Day 2 Optimal Price"
+                          : selectedOption === "Day 4"
+                          ? "Day 3 Optimal Price"
+                          : selectedOption === "Day 5"
+                          ? "Day 4 Optimal Price"
+                          : selectedOption === "Day 6"
+                          ? "Day 5 Optimal Price"
+                          : selectedOption === "Day 7"
+                          ? "Day 6 Optimal Price"
+                          : ""}
+                      </th>
+                      <th className="table_heading">
+                        {selectedOption === "Day 1"
+                          ? "Today's Max Profit"
+                          : selectedOption === "Day 2"
+                          ? "Day 1 Max Profit"
+                          : selectedOption === "Day 3"
+                          ? "Day 2 Max Profit"
+                          : selectedOption === "Day 4"
+                          ? "Day 3 Max Profit"
+                          : selectedOption === "Day 5"
+                          ? "Day 4 Max Profit"
+                          : selectedOption === "Day 6"
+                          ? "Day 5 Max Profit"
+                          : selectedOption === "Day 7"
+                          ? "Day 6 Max Profit"
+                          : ""}
+                      </th>
+                      <th className="table_heading">
+                        {selectedOption === "Day 1"
+                          ? "Today's Sales"
+                          : selectedOption === "Day 2"
+                          ? "Day 1 Sales"
+                          : selectedOption === "Day 3"
+                          ? "Day 2 Sales"
+                          : selectedOption === "Day 4"
+                          ? "Day 3 Sales"
+                          : selectedOption === "Day 5"
+                          ? "Day 4 Sales"
+                          : selectedOption === "Day 6"
+                          ? "Day 5 Sales"
+                          : selectedOption === "Day 7"
+                          ? "Day 6 Sales"
+                          : ""}
+                      </th>
+                      <th className="table_heading">Confirm Price Change</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {ProductsList
-                      ? ProductsList.map((item, index) => (
+                    {optimizedProducts
+                      ? optimizedProducts.map((item, index) => (
                           <ProductTableRow
                             data={item}
-                            setProductsList={setProductsList}
-                            index={index}
+                            updateOptimizedProducts={updateOptimizedProducts}
                           />
                         ))
                       : ""}
