@@ -10,12 +10,13 @@
 .dashboard_statistics_row{
     display: flex;
     justify-content: space-between;
+    padding-top: 5em;
 
 
 }
 
 .dashboard_statistics_infocard{
-    width: 32%;
+    width: 24%;
     background-color: white;
     border-radius: 8px;
     padding: 2em;
@@ -55,3 +56,333 @@
     line-height: 32px; /* 133.333% */
     letter-spacing: 0.12px;
 }
+
+.dashboard_graph_row{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 3em;
+
+}
+
+.dashboard_graph_input_container{
+
+    width: 25%;
+    background-color: white;
+
+    border-radius: 8px;
+    height: fit-content;
+    padding: 2em;
+
+
+
+}
+
+.dashboard_graph_input_label{
+    color: var(--neutral-black-black-500, #667085);
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+    padding: 0em 0 0.2em 0;
+
+}
+
+.dashboard_graph_input{
+    padding: 0.8em 1em;
+    background-color: #f9f9fc;
+    border-radius: 8px;
+    margin-top: 0.5em;
+    /* margin-bottom: 2em; */
+    width: 100%;
+  
+    border: 1px solid gray;
+
+}
+
+.dashboard_graph_btn{
+    
+    color: white;
+    /* Text M/Semibold */
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    /* font-weight: 600; */
+    line-height: 20px; /* 142.857% */
+    letter-spacing: 0.07px;
+  
+    padding: 0.5em 1em;
+    border-radius: 8px;
+  
+    border: none;
+  
+    cursor: pointer;
+  
+    background-color: #18abb1;
+    margin-top: 1em;
+    width: 100%;
+}
+
+.dashboard_graph_btn:hover {
+    background-color: #a1cacb;
+    background-color: #1dc1c7;
+}
+
+.dashboard_graph_container{
+    background-color: white;
+    border-radius: 8px;
+    width: 73%;
+
+    color: var(--neutral-black-black-500, #667085);
+
+    /* Text L/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 150% */
+    letter-spacing: 0.08px;
+    padding: 1em 0 0.2em 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.dashboard_graph_title{
+    text-align: center;
+    margin-bottom: 0.5em;
+    font-family: var(--Roboto);
+    font-size: 2.5rem;
+    /* padding-top: 1em; */
+}
+
+.dashboard_guagechart_container{
+    padding-top: 4em;
+}
+
+.dashboard_guagechart_percentage{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.4rem;
+    color: #333;
+    font-weight: bold;
+    font-family: var(--Roboto);
+
+}
+
+
+.dashboard_guagechart_caption_container{
+    display: flex;
+    justify-content: space-between;
+    padding-top: 7em;
+
+
+}
+
+.dashboard_guagechart_caption{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 50%;
+
+}
+
+.dashboard_guagechart_caption_title{
+    color: var(--neutral-black-black-500, #667085);
+    text-align: center;
+
+    /* Text S/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 18px; /* 150% */
+    letter-spacing: 0.06px;
+
+}
+
+.dashboard_guagechart_caption_content{
+    color: var(--neutral-black-black-700, #333843);
+
+    /* Display M/Medium */
+    font-family: var(--Roboto);
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 32px; /* 133.333% */
+    letter-spacing: 0.12px;
+
+}
+
+.dashboard_top_selling_product_container{
+    background-color: white;
+    border-radius: 8px;
+    margin-top: 3em;
+    padding: 4em 2em 2em 2em;
+    margin-bottom: 5em;
+
+}
+
+.dashboard_top_selling_product_title{
+    color: var(--neutral-black-black-700, #333843);
+
+    /* Display XS/Medium */
+    font-family: var(--Roboto);
+    font-size: 1.8rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 28px; /* 155.556% */
+    letter-spacing: 0.09px;
+
+}
+
+
+
+/* ---------------- Graph */
+
+.custom_tooltip {
+    background-color: rgba(24, 171, 177, 0.3); /* Use rgba to specify opacity for the background color */
+    padding: 0.5em 0.8em;
+    border-radius: 20px;
+}
+
+.custom_tooltip p {
+    color: black;
+    /* You can remove opacity property for the paragraphs if you want them fully visible */
+}
+
+
+.predictions_btn_container{
+    display: flex;
+    width: 50%;
+    margin-bottom: 1em;
+}
+
+.predictions_toggle_active_btn{
+    color: white;
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.07px;
+  
+    padding: 0.5em 1em;
+    border-radius: 8px;
+  
+    border: none;
+  
+    cursor: pointer;
+  
+    background-color: #18abb1;
+    /* margin: 1em; */
+    width: 100%;
+}
+.predictions_toggle_nonactive_btn{
+    color: var(--neutral-black-black-700, #333843);
+    font-family: var(--Roboto);
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 100;
+    line-height: 20px;
+    letter-spacing: 0.07px;
+  
+    padding: 0.5em 1em;
+    border-radius: 8px;
+  
+    border: none;
+  
+    cursor: pointer;
+  
+    background-color: white;
+    /* margin: 1em; */
+    width: 100%;
+}
+
+.price_opt_btn{
+    padding: 1em 2em;
+    border: none;
+    background-color: #18abb1;
+    color: white;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    
+}
+
+.price_opt_btn:hover{
+    background-color: #57bcbf;
+    cursor: pointer;
+
+    
+}
+
+/* Dropdown container */
+.dropdown {
+    margin-bottom: 10px; /* Adjust margin as needed */
+  }
+  
+  /* Dropdown select element */
+  .dropdown select {
+    margin-top: 1em;
+    width: 200px; /* Set width as needed */
+    padding: 8px; /* Adjust padding as needed */
+    font-size: 16px; /* Adjust font size as needed */
+    border: 1px solid #ccc; /* Set border as needed */
+    border-radius: 4px; /* Set border radius as needed */
+    background-color: #fff; /* Set background color as needed */
+    color: #333; /* Set text color as needed */
+    cursor: pointer; /* Set cursor as pointer */
+  }
+  
+  /* Dropdown select element when hovered */
+  .dropdown select:hover {
+    border-color: #666; /* Change border color on hover as needed */
+  }
+  
+  /* Dropdown select element when focused */
+  .dropdown select:focus {
+    outline: none; /* Remove default focus outline */
+    box-shadow: 0 0 0 2px #18abb1; /* Add custom focus shadow as needed */
+  }
+  
+  /* Dropdown select element arrow */
+  .dropdown select::-ms-expand {
+    display: none; /* Hide default arrow for IE */
+  }
+  
+  /* Dropdown select element arrow for other browsers */
+  .dropdown select:after {
+    content: '\25BC'; /* Unicode character for arrow */
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    pointer-events: none; /* Ensure the arrow doesn't interfere with the select functionality */
+  }
+
+  /* Dropdown list */
+.dropdown select option {
+    padding: 2em !important; /* Adjust padding as needed */
+    font-size: 1.5rem; /* Adjust font size as needed */
+    background-color: #fff; /* Set background color as needed */
+    color: #333; /* Set text color as needed */
+  }
+  
+  /* Dropdown list when hovered */
+  .dropdown select option:hover {
+    background-color: #f0f0f0; /* Change background color on hover as needed */
+  }
+  
+  /* Dropdown list when selected */
+  .dropdown select option[selected] {
+    background-color: #007bff; /* Change background color of selected option as needed */
+    color: #fff; /* Change text color of selected option as needed */
+  }

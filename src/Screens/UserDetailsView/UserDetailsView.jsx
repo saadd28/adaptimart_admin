@@ -72,7 +72,6 @@ export default function UserDetailsView() {
   let data = location.state ? location.state.datatosend : null;
   const orders_count = location.state ? location.state.orders_count : 0;
 
-
   console.log("data in user", data);
 
   return (
